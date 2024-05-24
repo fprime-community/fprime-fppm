@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fppm"
+dynamic = ["version"]
+description = "A package and dependency manager for F Prime"
+readme = "README.md"
+reqires-python = ">=3.8"
+license = {file = "LICENSE.txt"}
+keywords = ["fprime", "package", "library", "fppm", "dependency"]
+authors = [
+    {name = "Ali Mosallaei", email = "ali.mosallaei@jpl.nasa.gov"},
+    {name = "Michael Starch", email = "michael.d.starch@jpl.nasa.gov"}
+]
+
+dependencies = [
+
+]
+
+[project.urls]
+Homepage = "https://fprime.jpl.nasa.gov"
+Documentation = "https://nasa.github.io/fprime"
+Repository = "https://github.com/mosa11aei/fprime-fppm"
+
+[project.scripts]
+# fppm
+
+[tool.setuptools_scm]
