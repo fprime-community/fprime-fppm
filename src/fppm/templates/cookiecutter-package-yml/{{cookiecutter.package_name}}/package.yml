@@ -1,0 +1,31 @@
+package_info:
+  name: {{cookiecutter.package_name}}
+  description: {{cookiecutter.package_desc}}
+  author: {{cookiecutter.package_autor}}
+  repo: # set this up after running "fppm package"
+  version: 0.0.1
+
+fprime_info:
+  built-with: << GET F PRIME VERSION >>
+  compatible-with:
+    - << GET F PRIME VERSION >> 
+
+# the files (or folders) that are included in the package
+package_files:
+  components:
+    # - ComponentA/
+    # - ComponentB/
+    # ...
+
+  subtopologies:
+    # - SubtopologyA/
+    # - SubtopologyB/
+    # ...
+
+  # documentation should go in a single folder. Defaults to ./docs/
+  docs: docs/
+
+  # any other relevant files to the package
+  other:
+    # - AFile.cpp
+    # - AFolder/

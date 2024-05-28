@@ -4,22 +4,24 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fprime-fppm"
-dynamic = ["version"]
 version = "0.0.1"
 description = "A package and dependency manager for F Prime"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {file = "LICENSE.txt"}
 keywords = ["fprime", "fppm", "nasa", "flight", "software"]
 authors = [
   {name = "Ali Mosallaei", email = "Ali.Mosallaei@jpl.nasa.gov"},
   {name = "Michael Starch", email = "Michael.D.Starch@jpl.nasa.gov"},
 ]
 
+dependencies = [
+  "pyyaml>=6.0.0"
+]
+
 [project.urls]
 Homepage = "https://fprime.jpl.nasa.gov"
 Documentation = "https://nasa.github.io/fprime/"
-Repository = "https://github.com/fprime-community/fprime-tools"
+Repository = "https://github.com/mosa11aei/fprime-fppm"
 
 ####
 # Entry Points:
