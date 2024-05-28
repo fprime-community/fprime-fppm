@@ -1,30 +1,44 @@
 [build-system]
-requires = ["setuptools", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools", "setuptools_scm[toml]>=6.2", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fppm"
+name = "fprime-fppm"
 dynamic = ["version"]
+version = "0.0.1"
 description = "A package and dependency manager for F Prime"
 readme = "README.md"
-reqires-python = ">=3.8"
+requires-python = ">=3.8"
 license = {file = "LICENSE.txt"}
-keywords = ["fprime", "package", "library", "fppm", "dependency"]
+keywords = ["fprime", "fppm", "nasa", "flight", "software"]
 authors = [
-    {name = "Ali Mosallaei", email = "ali.mosallaei@jpl.nasa.gov"},
-    {name = "Michael Starch", email = "michael.d.starch@jpl.nasa.gov"}
-]
-
-dependencies = [
-
+  {name = "Ali Mosallaei", email = "Ali.Mosallaei@jpl.nasa.gov"},
+  {name = "Michael Starch", email = "Michael.D.Starch@jpl.nasa.gov"},
 ]
 
 [project.urls]
 Homepage = "https://fprime.jpl.nasa.gov"
-Documentation = "https://nasa.github.io/fprime"
-Repository = "https://github.com/mosa11aei/fprime-fppm"
+Documentation = "https://nasa.github.io/fprime/"
+Repository = "https://github.com/fprime-community/fprime-tools"
 
+####
+# Entry Points:
+#
+# Defines the list of entry-level (scripts) that are defined by this package. This allows
+# standard use of utilities that ship as part of F prime.
+####
 [project.scripts]
-# fppm
+fppm = "fppm.cli.__main__:main"
 
-[tool.setuptools_scm]
+
+####
+# Additional notes
+#
+# With regards to the configuration of the older versions of setup.py:
+# - package_data: included by default, and setuptools_scm will automatically include all files tracked by git
+# - package discovery (src/): setuptools will automatically discover all packages as we use the src-layout
+#
+# Reference:
+# - https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+# - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#src-layout
+####

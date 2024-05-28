@@ -3,14 +3,14 @@ import argparse
 # setup the "new" subcommand parser
 def setup_new_parser() -> callable:
     new_parser = argparse.ArgumentParser(
-        description='Create a new fp-package.yml metadata file.',
+        description='Create a new package.yml metadata file.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     
     return new_parser    
 
 # function to setup the complete CLI
-def setup_cli_parser():
+def start_cli_parser(args: list):
     # collect all parsers
     parsers = {
         'new': setup_new_parser(),
@@ -22,4 +22,4 @@ def setup_cli_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     
-    
+    print(f"parsers: {parsers}")
