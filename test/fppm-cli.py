@@ -3,6 +3,7 @@ import fppm.cli.commands.new as cmd_new
 from argparse import Namespace
 import os
 import shutil
+import pytest
 
 def setup_test_env():
     # make tmp directory here
@@ -52,6 +53,13 @@ def test_new_with_args():
     context1["extra_context"]["package_name"] = "testing2"
     assert cmd_new.create_new_package_yml(args, context1) == 0 # should pass
     print(f"[INFO]: Test New.4 passed")
+    
+    context1["extra_context"]["package_name"] = "testing 3"
+    try:
+        cmd_new.create_new_package_yml(args, context1) # should fail, invalid name
+        assert False
+    except:
+        print(f"[INFO]: Test New.5 passed")
     
     teardown_test_env()
     
