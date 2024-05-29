@@ -16,7 +16,7 @@ def setup_new_parser(subparsers) -> callable:
         "--git-url",
         type=str,
         help="The git URL that your package will be version controlled with",
-        required=True
+        required=False
     )
     
     return new_parser    

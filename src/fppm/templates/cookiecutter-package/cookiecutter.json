@@ -7,6 +7,6 @@
         "package_name": "Package name",
         "author": "Package author",
         "package_desc": "Package description",
-        "package_actual_name": "Your package's identifier (@[github-username]/[package-name])"
+        "package_id": "Your package's identifier (@<github-username>/<package-name>)"
     }
 }

@@ -8,9 +8,12 @@ ROUTER = {
 
 def route_commands(command, args: list) -> int:
     try:
-        return ROUTER[command](args)
+        exec = ROUTER[command](args, {})
+        if exec:
+            sys.exit(1)
+        return 0
     except KeyError:
-        print(f"[ERR]: Unknown command '{command}'")
+        print(f"[ERR]: {e}")
         sys.exit(1)
     except Exception as e:
         print(f"[ERR]: {e}")
