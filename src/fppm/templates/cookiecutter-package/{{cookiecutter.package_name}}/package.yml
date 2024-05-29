@@ -1,4 +1,5 @@
 package_info:
+  id: {{cookiecutter.package_id}}
   name: {{cookiecutter.package_name}}
   description: {{cookiecutter.package_desc}}
   author: {{cookiecutter.author}}
@@ -29,3 +30,5 @@ package_files:
   other:
     # - AFile.cpp
     # - AFolder/
+
+dependencies:

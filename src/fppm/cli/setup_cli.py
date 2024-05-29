@@ -12,6 +12,13 @@ def setup_new_parser(subparsers) -> callable:
         add_help=False
     )
     
+    new_parser.add_argument(
+        "--git-url",
+        type=str,
+        help="The git URL that your package will be version controlled with",
+        required=True
+    )
+    
     return new_parser    
 
 # function to setup the complete CLI
@@ -38,4 +45,4 @@ def start_cli_parser(args: list):
         sys.exit(1)
         
     # route the command
-    return CMD_ROUTER.route_commands(parsed.command, args[1:])
+    return CMD_ROUTER.route_commands(parsed.command, parsed)
