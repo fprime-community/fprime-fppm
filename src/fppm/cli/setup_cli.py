@@ -1,5 +1,6 @@
 import argparse
 import sys
+import fppm.cli.router as CMD_ROUTER
 
 # setup the "new" subcommand parser
 def setup_new_parser(subparsers) -> callable:
@@ -27,8 +28,14 @@ def start_cli_parser(args: list):
     setup_new_parser(subparsers)
     
     parsed, unknown = parser.parse_known_args(args)
-    print(unknown)
         
     if len(unknown) > 0:
         print(f"[ERR] Unknown arguments: {unknown}")
         sys.exit(1)
+        
+    if parsed.command is None:
+        print(f"[ERR] No command provided")
+        sys.exit(1)
+        
+    # route the command
+    return CMD_ROUTER.route_commands(parsed.command, args[1:])
