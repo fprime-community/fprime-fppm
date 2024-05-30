@@ -12,7 +12,7 @@ def route_commands(command, args: list) -> int:
         if exec:
             sys.exit(1)
         return 0
-    except KeyError:
+    except KeyError as e:
         print(f"[ERR]: {e}")
         sys.exit(1)
     except Exception as e:

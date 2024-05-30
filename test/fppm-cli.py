@@ -31,6 +31,9 @@ def test_new_with_args():
             "package_name": 'testing',
             "author": "Ali Mosallaei",
             "package_desc": "This is a test package"
+        },
+        "inputs": {
+            "git": "n"
         }
     }
     
