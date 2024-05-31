@@ -16,7 +16,8 @@ authors = [
 
 dependencies = [
   "pyyaml>=6.0.0",
-  "cookiecutter>=2.2.3"
+  "cookiecutter>=2.2.3",
+  "validators>=0.28.3",
 ]
 
 [project.optional-dependencies]

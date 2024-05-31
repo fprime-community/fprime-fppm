@@ -2,6 +2,39 @@ import argparse
 import sys
 import fppm.cli.router as CMD_ROUTER
 
+# setup the "registries" subcommand parser
+def setup_registries_parser(subparsers) -> callable:
+    registries_parser = subparsers.add_parser(
+        "registries",
+        description='Control and validate the package registries in the project',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Control and validate the package registries in the project',
+        add_help=False
+    )
+    
+    registries_parser.add_argument(
+        "validate",
+        type=bool,
+        help="Validate the package registries",
+        required=False
+    )
+    
+    registries_parser.add_argument(
+        "add",
+        type=str,
+        help="Add a new package registry. Must be a direct URL to the registry.yml file",
+        required=False
+    )
+    
+    registries_parser.add_argument(
+        "--project-yaml-path",
+        type=str,
+        help="The relative path to the project.yml file",
+        required=False
+    )
+    
+    return registries_parser
+
 # setup the "new" subcommand parser
 def setup_new_parser(subparsers) -> callable:
     new_parser = subparsers.add_parser(
@@ -33,6 +66,7 @@ def start_cli_parser(args: list):
 
     # setup all subparsers
     setup_new_parser(subparsers)
+    setup_registries_parser(subparsers)
     
     parsed, unknown = parser.parse_known_args(args)
         
