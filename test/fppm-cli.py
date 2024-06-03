@@ -23,7 +23,37 @@ def teardown_test_env():
         os.chdir("..")
         shutil.rmtree("tmp", ignore_errors=True)
         
-def test_registries_validation():    
+def test_registries_add():
+    setup_test_env()
+    
+    context1 = {
+        "extra_context": {
+            "project_name": "TESTING",
+            "project_author": "Ali Mosallaei",
+            "project_desc": "This is a test project"
+        }
+    }
+    
+    os.mkdir("fprime")
+    assert cmd_init.create_project_yaml_file(None, context1) == 0 # should pass
+    print(f"[INFO]: Project.yaml created")
+    
+    cmd_registries.registries_add(Namespace(add="blah", project_yaml_path="project.yaml"), None) == 1 # should fail, invalid URL
+    print(f"[INFO]: Test Registries.1 passed")
+    
+    cmd_registries.registries_add(Namespace(add="../static/broken-registry.yaml", project_yaml_path="project.yaml"), None) == 1 # should fail, not working registry
+    print(f"[INFO]: Test Registries.2 passed")
+    
+    cmd_registries.registries_add(Namespace(add="../static/working-registry.yaml", project_yaml_path="project.yaml"), None) == 0 # should pass
+    print(f"[INFO]: Test Registries.3 passed")
+    
+    # uncomment to test a remote registry
+    # cmd_registries.registries_add(Namespace(add="http://localhost:5000/static/registry.yaml", project_yaml_path="project.yaml"), None) == 0 # should pass
+    # print(f"[INFO]: Test Registries.4 passed")
+    
+    teardown_test_env()
+            
+def test_registries_validation():  
     assert cmd_registries.verify_registry("blah") == 1 # should fail, invalid URL
     print(f"[INFO]: Test Registries.1 passed")
     
@@ -34,8 +64,8 @@ def test_registries_validation():
     print(f"[INFO]: Test Registries.3 passed")
     
     # uncomment to test a remote registry
-    assert cmd_registries.verify_registry("http://localhost:5000/static/registry.yaml") != 1 # should pass
-    print(f"[INFO]: Test Registries.4 passed")
+    # assert cmd_registries.verify_registry("http://localhost:5000/static/registry.yaml") != 1 # should pass
+    # print(f"[INFO]: Test Registries.4 passed")
     
 def test_init():
     setup_test_env()

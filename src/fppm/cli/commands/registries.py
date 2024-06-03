@@ -7,7 +7,8 @@ import os
 def verify_registry(registry_url) -> int:
     isRemoteYaml = False
     if registry_url is not None:
-        if validators.url(registry_url) or "localhost" in registry_url:
+        # localhost bypass: it should still fail if invalid later on
+        if validators.url(registry_url) or "localhost" in registry_url: 
             if registry_url.endswith(".yaml"):  # https://stackoverflow.com/a/21059164
                 isRemoteYaml = True
             else:
@@ -122,7 +123,7 @@ def registries_add(args, context) -> int:
     if projectYamlContent == 1:
         return 1
 
-    if projectYamlContent["registries"] is None:
+    if projectYamlContent.get("registries") is None:
         projectYamlContent["registries"] = [args.add]
     else:
         if args.add not in projectYamlContent["registries"]:
@@ -130,7 +131,7 @@ def registries_add(args, context) -> int:
         else:
             print(f"[ERR]: Registry already exists in project.yaml file.")
             return 1
-
+    
     write = write_to_project_yaml(projectYamlPath, projectYamlContent)
     if write == 1:
         return 1
