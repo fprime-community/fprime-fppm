@@ -1,0 +1,4 @@
+project:
+  - name: {{ cookiecutter.project_name }}
+  - author: {{ cookiecutter.project_author }}
+  - description: {{ cookiecutter.project_desc }}

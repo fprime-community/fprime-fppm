@@ -1,5 +1,6 @@
 # testing done with pytest
 import fppm.cli.commands.new as cmd_new
+import fppm.cli.commands.init as cmd_init
 from argparse import Namespace
 import os
 import shutil
@@ -21,6 +22,34 @@ def teardown_test_env():
         os.chdir("..")
         shutil.rmtree("tmp", ignore_errors=True)
     
+def test_init():
+    setup_test_env()
+    
+    assert cmd_init.create_project_yaml_file(None, None) == 1 # should fail, not in fprime directory
+    print(f"[INFO]: Test Init.1 passed")
+    
+    context1 = {
+        "extra_context": {
+            "project_name": "TESTING",
+            "project_author": "Ali Mosallaei",
+            "project_desc": "This is a test project"
+        }
+    }
+    
+    os.mkdir("fprime")
+    assert cmd_init.create_project_yaml_file(None, context1) == 0 # should pass
+    print(f"[INFO]: Test Init.2 passed")
+    
+    os.remove("project.yaml")
+    context1["extra_context"]["project_name"] = "TESTING 2"
+    
+    try:
+        cmd_init.create_project_yaml_file(None, context1) == 0 # should fail, invalid name
+        assert False
+    except:
+        print(f"[INFO]: Test Init.3 passed")
+    
+    teardown_test_env()
 
 def test_new_with_args():
     setup_test_env()

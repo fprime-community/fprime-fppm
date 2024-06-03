@@ -1,0 +1,10 @@
+{
+    "project_name": "MyCoolProject",
+    "project_author": "A cool project",
+    "project_desc": "Ada Straper Aspera",
+    "__prompts__": {
+        "package_name": "Project name",
+        "project_author": "Project author",
+        "project_desc": "Package description"
+    }
+}
