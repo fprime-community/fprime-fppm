@@ -1,6 +1,7 @@
 # testing done with pytest
 import fppm.cli.commands.new as cmd_new
 import fppm.cli.commands.init as cmd_init
+import fppm.cli.commands.registries as cmd_registries
 from argparse import Namespace
 import os
 import shutil
@@ -21,6 +22,20 @@ def teardown_test_env():
     if os.getcwd().split("/")[-1] == "tmp":
         os.chdir("..")
         shutil.rmtree("tmp", ignore_errors=True)
+        
+def test_registries_validation():    
+    assert cmd_registries.verify_registry("blah") == 1 # should fail, invalid URL
+    print(f"[INFO]: Test Registries.1 passed")
+    
+    assert cmd_registries.verify_registry("static/broken-registry.yaml") == 1 # should fail, not working registry
+    print(f"[INFO]: Test Registries.2 passed")
+    
+    assert cmd_registries.verify_registry("static/working-registry.yaml") != 1 # should pass
+    print(f"[INFO]: Test Registries.3 passed")
+    
+    # uncomment to test a remote registry
+    assert cmd_registries.verify_registry("http://localhost:5000/static/registry.yaml") != 1 # should pass
+    print(f"[INFO]: Test Registries.4 passed")
     
 def test_init():
     setup_test_env()

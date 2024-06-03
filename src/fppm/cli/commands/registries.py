@@ -7,7 +7,7 @@ import os
 def verify_registry(registry_url) -> int:
     isRemoteYaml = False
     if registry_url is not None:
-        if validators.url(registry_url):
+        if validators.url(registry_url) or "localhost" in registry_url:
             if registry_url.endswith(".yaml"):  # https://stackoverflow.com/a/21059164
                 isRemoteYaml = True
             else:
@@ -32,29 +32,31 @@ def verify_registry(registry_url) -> int:
             getYamlContent = requests.get(registry_url, allow_redirects=True)
         else:
             with open(registry_url, "r") as f:
-                getYamlContent = f.read()
+                getYamlContent = yaml.safe_load(f)
     except requests.exceptions.RequestException as e:
         print(f"[ERR]: Error obtaining registry [{registry_url}]: {e}")
         return 1
 
     try:
-        getYamlContent = yaml.safe_load(getYamlContent.content.decode("utf-8"))
+        if isRemoteYaml:
+            getYamlContent = yaml.safe_load(getYamlContent.content.decode("utf-8"))
     except yaml.YAMLError as e:
         print(f"[ERR]: Error parsing YAML content of registry [{registry_url}]: {e}")
         return 1
-
+    
     if getYamlContent is None:
         print(f"[ERR]: No content found in registry [{registry_url}].")
         return 1
 
+    yamlKeys = getYamlContent.keys()
     verificationsOfYaml = [
-        hasattr("name") and getYamlContent["name"] is not None,
-        hasattr("description") and getYamlContent["description"] is not None,
-        hasattr("publisher") and getYamlContent["publisher"] is not None,
-        hasattr("updated-on") and getYamlContent["updated-on"] is not None,
-        getYamlContent["namespaces"] is not None,
+        "name" in yamlKeys and getYamlContent.get("name") is not None,
+        "description" in yamlKeys and getYamlContent.get("description") is not None,
+        "publisher" in yamlKeys and getYamlContent.get("publisher") is not None,
+        "updated-on" in yamlKeys and getYamlContent.get("updated-on") is not None,
+        getYamlContent.get("namespaces") is not None,
     ]
-
+    
     if all(verificationsOfYaml):
         return getYamlContent
     else:

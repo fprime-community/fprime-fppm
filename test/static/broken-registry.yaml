@@ -1,0 +1,16 @@
+description: "Sample F Prime Package Registry"
+
+namespaces:
+  - mosallaei:
+    - shortname:
+      - git: https://github.com/mosa11aei/testing
+      - stable: v1.0
+  - mosallaei-masters:
+    - shortname2:
+      - git: https://github.com/mosa11aei/testing
+      - package: PackageName
+      - stable: v1.0
+    - shortname3:
+      - git: https://github.com/mosa11aei/testing
+      - package: PackageName2
+      - stable: v1.0
