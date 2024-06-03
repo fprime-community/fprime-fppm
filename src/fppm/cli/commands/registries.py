@@ -1,35 +1,37 @@
 import validators
 import requests
 import yaml
-
-# stubs for readability
-def verify_registry(registry_url) -> int : ...
-def open_project_yaml(project_yaml_path) -> tuple : ...
-def write_to_project_yaml(projectYamlPath, projectYamlContent) -> int : ...
-def registries_add(args, context) -> int : ...
-def registries_validate(args, context) -> int : ...
-def registries_entrypoint(args, context) -> int : ...
+import os
 
 def verify_registry(registry_url) -> int:
+    isRemoteYaml = False
     if registry_url is not None:
         if validators.url(registry_url):
             if registry_url.endswith(".yaml"): # https://stackoverflow.com/a/21059164
-                pass
+                isRemoteYaml = True
             else:
                 print(f"[ERR]: Invalid URL [{registry_url}]: link must end in .yaml")
                 return 1
         else:
-            print(f"[ERR]: Invalid URL [{registry_url}]: generally malformed.")
-            return 1
+            # may be a relative path
+            if os.path.exists(registry_url):
+                isRemoteYaml = False
+            else:
+                print(f"[ERR]: Invalid URL [{registry_url}]: link (local) does not exist or URL is malformed.")
+                return 1  
     else:
         print(f"[ERR]: No URL provided. You should never see this exact error message.")
         return 1
     
     getYamlContent = None
     try:
-        getYamlContent = requests.get(registry_url, allow_redirects=True)
+        if isRemoteYaml:
+            getYamlContent = requests.get(registry_url, allow_redirects=True)
+        else:
+            with open(registry_url, 'r') as f:
+                getYamlContent = f.read()
     except requests.exceptions.RequestException as e:
-        print(f"[ERR]: Error remotely obtaining registry [{registry_url}]: {e}")
+        print(f"[ERR]: Error obtaining registry [{registry_url}]: {e}")
         return 1
     
     try:
