@@ -1,0 +1,1 @@
+# Package Design Document for {{ cookiecutter.package_name }}
