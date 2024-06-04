@@ -53,5 +53,5 @@ def create_project_yaml_file(args, context) -> int:
         print(f"[ERR]: {e}")
         return 1
 
-    print(f"[DONE]: Created project.yaml file.")
+    print(f"[DONE]: Created project.yaml file in the current directory. You are ready to use F Prime packages.")
     return 0

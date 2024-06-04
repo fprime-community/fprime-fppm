@@ -2,6 +2,32 @@ import argparse
 import sys
 import fppm.cli.router as CMD_ROUTER
 
+# setup the "install" subcommand parser
+def setup_install_parser(subparsers) -> callable:
+    install_parser = subparsers.add_parser(
+        "install",
+        description="Install a package from the registries or via git URL",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help="Install a package from the registries or via git URL",
+        add_help=True,
+    )
+    
+    install_parser.add_argument(
+        "--package",
+        type=str,
+        help="The name (or Git URL) of the package to install",
+        required=True,
+    )
+    
+    install_parser.add_argument(
+        "--version",
+        "-v",
+        type=str,
+        help="The version of the package to install",
+        required=False,
+    )
+    
+    return install_parser
 
 # setup the "registries" subcommand parser
 def setup_registries_parser(subparsers) -> callable:
@@ -10,18 +36,18 @@ def setup_registries_parser(subparsers) -> callable:
         description="Control and validate the package registries in the project",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help="Control and validate the package registries in the project",
-        add_help=False,
+        add_help=True,
     )
 
     registries_parser.add_argument(
-        "--validate", "--v", type=bool, help="Validate the package registries", required=False,
+        "--validate", "-v", action=argparse.BooleanOptionalAction, help="Validate the package registries", required=False,
     )
 
     registries_parser.add_argument(
         "--add",
-        "--a",
+        "-a",
         type=str,
-        help="Add a new package registry. Must be a direct URL to the registry.yaml file",
+        help="Add a new package registry. Must be a direct URL (or path) to the registry.yaml file",
         required=False,
     )
 
@@ -54,7 +80,7 @@ def setup_new_parser(subparsers) -> callable:
         description="Create a new package.yaml metadata file.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help="Create a new package.yaml metadata file.",
-        add_help=False,
+        add_help=True,
     )
 
     new_parser.add_argument(
@@ -79,6 +105,7 @@ def start_cli_parser(args: list):
 
     # setup all subparsers
     setup_init_parser(subparsers)
+    setup_install_parser(subparsers)
     setup_new_parser(subparsers)
     setup_registries_parser(subparsers)
 

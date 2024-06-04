@@ -2,11 +2,11 @@
     "package_name": "MyCoolPackage",
     "package_desc": "A cool package",
     "author": "Ada Straper Aspera",
-    "package_id": "@adastraperaspera/my-cool-package",
+    "package_id": "adastraperaspera/my-cool-package",
     "__prompts__": {
         "package_name": "Package name",
         "author": "Package author",
         "package_desc": "Package description",
-        "package_id": "Your package's identifier (@<github-username>/<package-name>)"
+        "package_id": "Your package's shortname (<github-username>/<package-name>)"
     }
 }

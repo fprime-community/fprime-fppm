@@ -3,8 +3,63 @@ import requests
 import yaml
 import os
 
-
-def verify_registry(registry_url) -> int:
+def shortname_to_git(project_yaml_path, shortname: str):
+    # shortnames must be in the format "namespace/package"
+    if "/" not in shortname:
+        print(f"[ERR]: Invalid shortname [{shortname}]: must be in the format 'namespace/package'.")
+        return 1
+    
+    pathToPackage = shortname.split("/")
+    
+    projectYamlPath, projectYamlContent = open_project_yaml(project_yaml_path)
+    if projectYamlContent == 1:
+        return 1
+    
+    allLocatedPackages = []
+    
+    for registry in projectYamlContent.get("registries"):
+        yamlContent = get_registry(registry)
+        if yamlContent == 1:
+            return 1
+        
+        for namespace in yamlContent.get("namespaces"):
+            if pathToPackage[0] in namespace.keys():
+                for packages in namespace.get(pathToPackage[0]):
+                    if pathToPackage[1] in packages.keys():
+                        allLocatedPackages.append({
+                            "registry": registry,
+                            "publisher": yamlContent.get("publisher"),
+                            "info": packages.get(pathToPackage[1])
+                        })
+                    else:
+                        pass
+            else:
+                pass
+            
+    if len(allLocatedPackages) == 0:
+        print(f"[ERR]: No packages found with shortname [{shortname}] in any registry.")
+        return 1
+            
+        
+    if len(allLocatedPackages) > 1:
+        print(f"[INFO]: Multiple packages found with shortname [{shortname}]. Please specify which one you want.")
+        for i in range(len(allLocatedPackages)):
+            print(f"[{i+1}]: {allLocatedPackages[i].get('registry')} (published by: {allLocatedPackages[i].get('publisher')}")
+        
+        try:
+            userChoice = int(input("[???] Please choose a package: "))
+            if userChoice < 1 or userChoice > len(allLocatedPackages):
+                print(f"[ERR]: Invalid choice.")
+                return 1
+            else:
+                return allLocatedPackages[userChoice-1]
+        except ValueError:
+            print(f"[ERR]: Invalid choice.")
+            return 1
+    else:
+        return allLocatedPackages[0]
+    
+def get_registry(registry_url):
     isRemoteYaml = False
     if registry_url is not None:
         # localhost bypass: it should still fail if invalid later on
@@ -47,6 +102,13 @@ def verify_registry(registry_url) -> int:
     
     if getYamlContent is None:
         print(f"[ERR]: No content found in registry [{registry_url}].")
+        return 1
+    
+    return getYamlContent
+
+def verify_registry(registry_url) -> int:
+    getYamlContent = get_registry(registry_url)
+    if getYamlContent == 1:
         return 1
 
     yamlKeys = getYamlContent.keys()
@@ -151,7 +213,7 @@ def registries_validate(args, context) -> int:
 
     validRegistries = []
 
-    for registry in projectYamlContent["registries"]:
+    for registry in projectYamlContent.get("registries"):
         print(f"[INFO]: Validating registry: {registry}")
         yamlContent = verify_registry(registry)
         if yamlContent == 1:

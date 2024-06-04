@@ -3,7 +3,7 @@ package_info:
   name: {{cookiecutter.package_name}}
   description: {{cookiecutter.package_desc}}
   author: {{cookiecutter.author}}
-  repo: # set this up after running "fppm package"
+  repo: # fill this in with a link to the git repo
   version: 0.0.1
 
 fprime_info:
