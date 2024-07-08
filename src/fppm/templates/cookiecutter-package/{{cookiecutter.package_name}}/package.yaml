@@ -11,24 +11,5 @@ fprime_info:
   compatible-with:
     - << GET F PRIME VERSION >> 
 
-# the files (or folders) that are included in the package
-package_files:
-  components:
-    # - ComponentA/
-    # - ComponentB/
-    # ...
-
-  subtopologies:
-    # - SubtopologyA/
-    # - SubtopologyB/
-    # ...
-
-  # documentation should go in a single folder. Defaults to ./docs/
-  docs: docs/
-
-  # any other relevant files to the package
-  other:
-    # - AFile.cpp
-    # - AFolder/
-
 dependencies:
+  # some dependencies, if had
