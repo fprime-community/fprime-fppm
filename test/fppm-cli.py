@@ -31,7 +31,8 @@ def test_registries_add():
             "project_name": "TESTING",
             "project_author": "Ali Mosallaei",
             "project_desc": "This is a test project"
-        }
+        },
+        "sac": "y"
     }
     
     os.mkdir("fprime")
@@ -78,7 +79,8 @@ def test_init():
             "project_name": "TESTING",
             "project_author": "Ali Mosallaei",
             "project_desc": "This is a test project"
-        }
+        },
+        "sac": "y"
     }
     
     os.mkdir("fprime")
@@ -138,6 +140,5 @@ def test_new_with_args():
     except:
         print(f"[INFO]: Test New.5 passed")
     
-    teardown_test_env()
-    
+    teardown_test_env()    
     

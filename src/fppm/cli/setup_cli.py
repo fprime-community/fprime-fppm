@@ -16,7 +16,7 @@ def setup_install_parser(subparsers) -> callable:
         "--package",
         type=str,
         help="The name (or Git URL) of the package to install",
-        required=True,
+        required=False,
     )
     
     install_parser.add_argument(
@@ -24,6 +24,21 @@ def setup_install_parser(subparsers) -> callable:
         "-v",
         type=str,
         help="The version of the package to install",
+        required=False,
+    )
+    
+    install_parser.add_argument(
+        "--project-yaml-path",
+        type=str,
+        help="The relative path to the project.yaml file",
+        required=False,
+    )
+    
+    install_parser.add_argument(
+        "--project",
+        "-p",
+        type=str,
+        help="Install all packages in the project.yaml file",
         required=False,
     )
     
