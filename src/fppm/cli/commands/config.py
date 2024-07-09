@@ -122,7 +122,7 @@ def update_gitignore():
             if gitignoreIsUpdated == False:
                 with open(".gitignore", "a") as gitignore:
                     gitignore.write("\n# F' package fillables")
-                    gitignore.write("\n*.fillables")
+                    gitignore.write("\n/*.fillables/")
         except Exception as e:
             print(f"[ERR]: Error adding *.fillables to .gitignore file: {e}")
             return 1     
