@@ -31,6 +31,7 @@ def pull_cookiecutter_variables(configObject, packagePath):
         
     # find all cookiecutter variables
     cookiecutterVariables = []
+    configDescription = ""
     
     if "{{" in configObject and "}}" in configObject:
         variable = configObject.split("{{")[1].split("}}")[0].strip().split(".")[1]
@@ -40,7 +41,20 @@ def pull_cookiecutter_variables(configObject, packagePath):
             "line": 0
         })
     
+    configDesc = False
     for line in configObjectContent.split("\n"):
+        if "@! begin config description" in line:
+            configDesc = True
+            continue
+        
+        if "@! end config description" in line:
+            configDesc = False
+            continue
+            
+        if configDesc:
+            configDescription += "# " + line.strip() + "\n"
+            continue
+        
         if "{{" in line and "}}" in line:
             # append the variable name
             variable = line.split("{{")[1].split("}}")[0].strip().split(".")[1]
@@ -51,9 +65,9 @@ def pull_cookiecutter_variables(configObject, packagePath):
                 "line": lineNumber + 1
             })
             
-    return cookiecutterVariables
+    return (cookiecutterVariables, configDescription)
 
-def create_fillable(variables, configObject, packagePath, fillablesPath):
+def create_fillable(variables, description, configObject, packagePath, fillablesPath):
     """
     Creates a fillable object file for a config object
     
@@ -75,6 +89,11 @@ def create_fillable(variables, configObject, packagePath, fillablesPath):
         fillableFile.write(f"__package_path: {packagePath}\n")
         fillableFile.write(f"__config_object: {configObject}\n")
         fillableFile.write("\n# === END METADATA ===\n\n")
+        
+        if description != "" and description is not None:
+            fillableFile.write("# === BEGIN DESCRIPTION ===\n")
+            fillableFile.write(description)
+            fillableFile.write("# === END DESCRIPTION ===\n\n")
         
         for variable in variables:
             fillableFile.write(f"# Context: {variable['context']} (line {variable['line']})\n")
@@ -121,12 +140,12 @@ def generate_config_fillables(args, context):
     packageYamlPath, packageYamlContent = cmd_registries.open_project_yaml(packageYamlPath)
     
     if 'config_objects' not in packageYamlContent:
-        print(f"[ERR]: No config objects found for package [{args.generate}].")
-        return 1
+        print(f"[INFO]: No config objects found for package [{args.generate}].")
+        return 0
     
     for configObject in packageYamlContent['config_objects']:
         print(f"[INFO]: Generating config fillable for object [{configObject}]...")
-        vars = pull_cookiecutter_variables(configObject, f"_fprime_packages/{packageFolder}")
+        vars, desc = pull_cookiecutter_variables(configObject, f"_fprime_packages/{packageFolder}")
         
         if vars == 1:
             return 1
@@ -136,8 +155,9 @@ def generate_config_fillables(args, context):
         except FileExistsError:
             pass
         
-        create_fillable(vars, configObject, f"_fprime_packages/{packageFolder}", f"{packageFolder}.fillables")
+        create_fillable(vars, desc, configObject, f"_fprime_packages/{packageFolder}", f"{packageFolder}.fillables")
         
+    print(f"[DONE]: Generated all fillables at [{packageFolder}.fillables].")
     return 0
 
 def cleanup():
@@ -239,6 +259,19 @@ def apply_config_fillables(args, context):
         # move all files in the generated directory to the out directory
         
         for file in os.listdir(actual_cookiecutter):
+            with open(f"{actual_cookiecutter}/{file}", "r") as fileContent:
+                content = fileContent.read()
+                
+            if "@! begin config description" in content:
+                # remove the description
+                idxStart = content.index("@! begin config description")
+                idxEnd = content.index("@! end config description")
+                
+                content = content[:idxStart] + content[idxEnd+26:] # length of "@! end config description"
+                
+                with open(f"{actual_cookiecutter}/{file}", "w") as fileContent:
+                    fileContent.write(content)
+                
             shutil.move(f"{actual_cookiecutter}/{file}", f"{packageFolder}.fillables/out")
             
         shutil.rmtree(actual_cookiecutter, ignore_errors=True)
