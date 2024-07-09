@@ -255,10 +255,13 @@ def apply_config_fillables(args, context):
         except FileExistsError:
             shutil.rmtree(f"{packageFolder}.fillables/out", ignore_errors=True)
             os.mkdir(f"{packageFolder}.fillables/out")
-        
+                    
         # move all files in the generated directory to the out directory
         
         for file in os.listdir(actual_cookiecutter):
+            if ".fpp" in file:
+                print(f"\n[!!!] Output file {file} is an FPP file; remember to add it as a source in CMakeLists.txt. \n")
+                
             with open(f"{actual_cookiecutter}/{file}", "r") as fileContent:
                 content = fileContent.read()
                 
@@ -275,6 +278,7 @@ def apply_config_fillables(args, context):
             shutil.move(f"{actual_cookiecutter}/{file}", f"{packageFolder}.fillables/out")
             
         shutil.rmtree(actual_cookiecutter, ignore_errors=True)
+        shutil.rmtree(f"__TMP__", ignore_errors=True)
             
         print(f"[DONE]: Applied fillable [{fillable}].")
         
