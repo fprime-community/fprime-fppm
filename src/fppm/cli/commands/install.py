@@ -82,7 +82,6 @@ def install_project_yaml(args, context):
     for package in content['packages']:
         print(f"[INFO]: Installing package [{package['name']}]...")
         install_package(Namespace(package=package['name'], version=package['version'], project_yaml_path=projectYamlPath), {})
-    
 
 def install_package(args, context):
     if args.package is None and args.version is None:

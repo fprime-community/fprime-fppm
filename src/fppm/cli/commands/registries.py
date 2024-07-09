@@ -144,16 +144,16 @@ def open_project_yaml(project_yaml_path) -> tuple:
 
     if project_yaml_path is not None:
         # verify that the project.yml file exists
-        print(f"[INFO]: Opening project.yaml file at {project_yaml_path}")
+        print(f"[INFO]: Opening {project_yaml_path}...")
         with open(project_yaml_path, "r") as f:
             try:
                 projectYamlContent = yaml.safe_load(f)
                 projectYamlPath = project_yaml_path
             except yaml.YAMLError as e:
-                print(f"[ERR]: Error parsing project.yaml file: {e}")
+                print(f"[ERR]: Error parsing file: {e}")
                 return (1, 1)
     else:
-        print(f"[INFO]: Opening project.yml file at ./project.yaml")
+        print(f"[INFO]: Opening ./project.yaml...")
         with open("project.yaml", "r") as f:
             try:
                 projectYamlContent = yaml.safe_load(f)

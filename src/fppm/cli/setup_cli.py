@@ -2,6 +2,41 @@ import argparse
 import sys
 import fppm.cli.router as CMD_ROUTER
 
+# set up the "config" subcommand parser
+def setup_config_parser(subparsers) -> callable:
+    config_parser = subparsers.add_parser(
+        "config",
+        description="Configure F Prime packages",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help="Configure F Prime packages",
+        add_help=True,
+    )
+    
+    config_parser.add_argument(
+        "--generate",
+        "-g",
+        type=str,
+        help="Generate configuration fillables for a package",
+        required=False,
+    )
+    
+    config_parser.add_argument(
+        "--apply",
+        "-a",
+        type=str,
+        help="Apply a set of configuration fillables to a package",
+        required=False,
+    )
+    
+    config_parser.add_argument(
+        "--project-yaml-path",
+        type=str,
+        help="The relative path to the project.yaml file",
+        required=False,
+    )
+    
+    return config_parser
+
 # setup the "install" subcommand parser
 def setup_install_parser(subparsers) -> callable:
     install_parser = subparsers.add_parser(
@@ -123,6 +158,7 @@ def start_cli_parser(args: list):
     setup_install_parser(subparsers)
     setup_new_parser(subparsers)
     setup_registries_parser(subparsers)
+    setup_config_parser(subparsers)
 
     parsed, unknown = parser.parse_known_args(args)
 
