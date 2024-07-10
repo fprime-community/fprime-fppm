@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: F Prime Package Manager
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ali
+    family-names: Mosallaei
+    email: alimos@umich.edu
+    affiliation: University of Michigan
+    orcid: 'https://orcid.org/0000-0001-9015-0018'
+  - name: The F Prime Framework Team
+    location: JPL / California Institute of Technology
+    alias: NASA JPL
+    website: 'https://fprime.jpl.nasa.gov/'
+    city: Pasadena
+    country: CA
+repository-code: 'https://github.com/mosa11aei/fprime-fppm'

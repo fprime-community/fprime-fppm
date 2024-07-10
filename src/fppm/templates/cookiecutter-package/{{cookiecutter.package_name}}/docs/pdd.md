@@ -24,6 +24,14 @@ This package provides some subtopologies to be utilized within your project.
 | ---------------- | ------------- |
 | MySubtopology    | [Link](FIXME) |
 
+# Config objects
+
+This package provides some files that can be configured by running `fppm config --generate [INSERT PACKAGE SHORTNAME]`.
+
+| Path to config object | Description                    |
+| --------------------- | ------------------------------ |
+| Example/Example.fpp   | Constants for local components |
+
 # Other Contents
 
 This package also provides other content that can be utilized within your project.
