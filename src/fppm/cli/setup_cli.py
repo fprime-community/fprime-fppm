@@ -2,6 +2,33 @@ import argparse
 import sys
 import fppm.cli.router as CMD_ROUTER
 
+# set up the "remove" subcommand parser
+def setup_remove_parser(subparsers) -> callable:
+    remove_parser = subparsers.add_parser(
+        "remove",
+        description="Remove a package from the project",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help="Remove a package from the project",
+        add_help=True,
+    )
+    
+    remove_parser.add_argument(
+        "--package",
+        "-p",
+        type=str,
+        help="The name of the package to remove",
+        required=False,
+    )
+    
+    remove_parser.add_argument(
+        "--project-yaml-path",
+        type=str,
+        help="The relative path to the project.yaml file",
+        required=False,
+    )
+    
+    return remove_parser
+
 # set up the "config" subcommand parser
 def setup_config_parser(subparsers) -> callable:
     config_parser = subparsers.add_parser(
@@ -49,6 +76,7 @@ def setup_install_parser(subparsers) -> callable:
     
     install_parser.add_argument(
         "--package",
+        "-p",
         type=str,
         help="The name (or Git URL) of the package to install",
         required=False,
@@ -71,7 +99,6 @@ def setup_install_parser(subparsers) -> callable:
     
     install_parser.add_argument(
         "--project",
-        "-p",
         type=str,
         help="Install all packages in the project.yaml file",
         required=False,
@@ -159,6 +186,7 @@ def start_cli_parser(args: list):
     setup_new_parser(subparsers)
     setup_registries_parser(subparsers)
     setup_config_parser(subparsers)
+    setup_remove_parser(subparsers)
 
     parsed, unknown = parser.parse_known_args(args)
 

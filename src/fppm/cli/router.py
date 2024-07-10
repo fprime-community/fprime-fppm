@@ -4,6 +4,7 @@ import fppm.cli.commands.registries as cmd_registries
 import fppm.cli.commands.init as cmd_init
 import fppm.cli.commands.install as cmd_install
 import fppm.cli.commands.config as cmd_config
+import fppm.cli.commands.remove as cmd_remove
 import sys
 
 ROUTER = {
@@ -12,6 +13,7 @@ ROUTER = {
     "init": cmd_init.create_project_yaml_file,
     "install": cmd_install.install_package,
     "config": cmd_config.config_entry,
+    "remove": cmd_remove.remove_package,
 }
 
 
