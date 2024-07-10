@@ -59,11 +59,42 @@ def pull_cookiecutter_variables(configObject, packagePath):
             # append the variable name
             variable = line.split("{{")[1].split("}}")[0].strip().split(".")[1]
             lineNumber = configObjectContent.split("\n").index(line)
+            
+            doNotAdd = False
+            
+            for vars in cookiecutterVariables:
+                if vars["variable"] in variable:
+                    doNotAdd = True
+            
+            if doNotAdd:
+                continue
+            
             cookiecutterVariables.append({
                 "context": line.strip(),
                 "variable": variable,
                 "line": lineNumber + 1
             })
+            
+            # append other variables in the line
+            for var in line.split("{{")[1:]:
+                variable = var.split("}}")[0].strip().split(".")[1]
+                lineNumber = configObjectContent.split("\n").index(line)
+                
+                doNotAdd = False
+                
+                for vars in cookiecutterVariables:
+                    print(vars["variable"], variable)
+                    if vars["variable"] in variable:
+                        doNotAdd = True
+                    
+                if doNotAdd:
+                    continue
+                
+                cookiecutterVariables.append({
+                    "context": line.strip(),
+                    "variable": variable,
+                    "line": lineNumber + 1
+                })
             
     return (cookiecutterVariables, configDescription)
 
@@ -253,8 +284,7 @@ def apply_config_fillables(args, context):
         try:
             os.mkdir(f"{packageFolder}.fillables/out")
         except FileExistsError:
-            shutil.rmtree(f"{packageFolder}.fillables/out", ignore_errors=True)
-            os.mkdir(f"{packageFolder}.fillables/out")
+            pass
                     
         # move all files in the generated directory to the out directory
         
