@@ -225,31 +225,6 @@ def install_package(args, context):
                         stderr=subprocess.PIPE,
                         stdout=subprocess.PIPE,
                     )
-                    
-                if package['info']['dir'] is not None:
-                    try:
-                        subprocess.check_call([
-                            'git',
-                            'sparse-checkout',
-                            'set',
-                            '--no-cone',
-                            package['info']['dir']
-                        ])
-                    except Exception as e:
-                        print(f"[ERR]: Error setting sparse-checkout: {e}")
-                        return 1
-                    
-                    # move the files to the root of the package
-                    try:
-                        subprocess.check_call([
-                            'mv',
-                            f"{package['info']['dir']}/*",
-                            "."
-                        ])
-                        shutil.rmtree(package['info']['dir'])
-                    except Exception as e:
-                        print(f"[ERR]: Error moving files to root of package: {e}")
-                        return 1
 
                 os.chdir("../../")
                 versionTextTernary = (
