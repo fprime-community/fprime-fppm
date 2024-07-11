@@ -48,7 +48,3 @@ fppm registries --add <url or path/to/registry.yaml>
 ```
 
 to add your registry to their project. An example registry with valid packages can be seen hosted at [this link](https://mosa11aei.github.io/fppm-registry/static/registry.yaml).
-
-## Example
-
-An example registry 
