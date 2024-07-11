@@ -109,7 +109,7 @@ def install_project_yaml(args, context):
 
 
 def install_package(args, context):
-    if args.package is None and args.version is None:
+    if (args.package is None and args.version is None) or args.project:
         return install_project_yaml(args, context)
 
     package = None

@@ -102,7 +102,7 @@ def setup_install_parser(subparsers) -> callable:
 
     install_parser.add_argument(
         "--project",
-        type=str,
+        action=argparse.BooleanOptionalAction,
         help="Install all packages in the project.yaml file",
         required=False,
     )
