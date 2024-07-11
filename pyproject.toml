@@ -4,14 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fprime-fppm"
-version = "0.0.1"
-description = "A package and dependency manager for F Prime"
+dynamic = ["version"]
+description = "A package manager for F Prime"
 readme = "README.md"
 requires-python = ">=3.8"
-keywords = ["fprime", "fppm", "nasa", "flight", "software"]
+keywords = ["fprime", "fppm", "nasa", "package", "flight software"]
 authors = [
   {name = "Ali Mosallaei", email = "Ali.Mosallaei@jpl.nasa.gov"},
   {name = "Michael Starch", email = "Michael.D.Starch@jpl.nasa.gov"},
+  {name = "Thomas Boyer-Chammard", email = "Thomas.Boyer.Chammard@jpl.nasa.gov"},
 ]
 
 dependencies = [
@@ -23,11 +24,12 @@ dependencies = [
 [project.optional-dependencies]
 test = [
   "pytest",
+  "black"
 ]
 
 [project.urls]
 Homepage = "https://fprime.jpl.nasa.gov"
-Documentation = "https://nasa.github.io/fprime/"
+Documentation = "https://github.com/mosa11aei/fprime-fppm/tree/devel/docs"
 Repository = "https://github.com/mosa11aei/fprime-fppm"
 
 ####
@@ -38,6 +40,13 @@ Repository = "https://github.com/mosa11aei/fprime-fppm"
 ####
 [project.scripts]
 fppm = "fppm.cli.__main__:main"
+
+####
+# setuptools_scm dynamically generates version number from git, as well as automatically
+# include all data files tracked by git (e.g. cookiecutter templates).
+# See https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+####
+[tool.setuptools_scm]
 
 
 ####
