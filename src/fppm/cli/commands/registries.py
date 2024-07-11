@@ -3,67 +3,76 @@ import requests
 import yaml
 import os
 
+
 def shortname_to_git(project_yaml_path, shortname: str):
     # shortnames must be in the format "namespace/package"
     if "/" not in shortname:
-        print(f"[ERR]: Invalid shortname [{shortname}]: must be in the format 'namespace/package'.")
+        print(
+            f"[ERR]: Invalid shortname [{shortname}]: must be in the format 'namespace/package'."
+        )
         return 1
-    
+
     pathToPackage = shortname.split("/")
-    
+
     projectYamlPath, projectYamlContent = open_project_yaml(project_yaml_path)
     if projectYamlContent == 1:
         return 1
-    
+
     allLocatedPackages = []
-    
+
     for registry in projectYamlContent.get("registries"):
         yamlContent = get_registry(registry)
         if yamlContent == 1:
             return 1
-        
+
         for namespace in yamlContent.get("namespaces"):
             if pathToPackage[0] in namespace.keys():
                 for packages in namespace.get(pathToPackage[0]):
                     if pathToPackage[1] in packages.keys():
-                        allLocatedPackages.append({
-                            "registry": registry,
-                            "publisher": yamlContent.get("publisher"),
-                            "info": packages.get(pathToPackage[1])
-                        })
+                        allLocatedPackages.append(
+                            {
+                                "registry": registry,
+                                "publisher": yamlContent.get("publisher"),
+                                "info": packages.get(pathToPackage[1]),
+                            }
+                        )
                     else:
                         pass
             else:
                 pass
-            
+
     if len(allLocatedPackages) == 0:
         print(f"[ERR]: No packages found with shortname [{shortname}] in any registry.")
         return 1
-            
-        
+
     if len(allLocatedPackages) > 1:
-        print(f"[INFO]: Multiple packages found with shortname [{shortname}]. Please specify which one you want.")
+        print(
+            f"[INFO]: Multiple packages found with shortname [{shortname}]. Please specify which one you want."
+        )
         for i in range(len(allLocatedPackages)):
-            print(f"[{i+1}]: {allLocatedPackages[i].get('registry')} (published by: {allLocatedPackages[i].get('publisher')}")
-        
+            print(
+                f"[{i+1}]: {allLocatedPackages[i].get('registry')} (published by: {allLocatedPackages[i].get('publisher')}"
+            )
+
         try:
             userChoice = int(input("[???] Please choose a package: "))
             if userChoice < 1 or userChoice > len(allLocatedPackages):
                 print(f"[ERR]: Invalid choice.")
                 return 1
             else:
-                return allLocatedPackages[userChoice-1]
+                return allLocatedPackages[userChoice - 1]
         except ValueError:
             print(f"[ERR]: Invalid choice.")
             return 1
     else:
         return allLocatedPackages[0]
-    
+
+
 def get_registry(registry_url):
     isRemoteYaml = False
     if registry_url is not None:
         # localhost bypass: it should still fail if invalid later on
-        if validators.url(registry_url) or "localhost" in registry_url: 
+        if validators.url(registry_url) or "localhost" in registry_url:
             if registry_url.endswith(".yaml"):  # https://stackoverflow.com/a/21059164
                 isRemoteYaml = True
             else:
@@ -99,12 +108,13 @@ def get_registry(registry_url):
     except yaml.YAMLError as e:
         print(f"[ERR]: Error parsing YAML content of registry [{registry_url}]: {e}")
         return 1
-    
+
     if getYamlContent is None:
         print(f"[ERR]: No content found in registry [{registry_url}].")
         return 1
-    
+
     return getYamlContent
+
 
 def verify_registry(registry_url) -> int:
     getYamlContent = get_registry(registry_url)
@@ -119,7 +129,7 @@ def verify_registry(registry_url) -> int:
         "updated-on" in yamlKeys and getYamlContent.get("updated-on") is not None,
         getYamlContent.get("namespaces") is not None,
     ]
-    
+
     if all(verificationsOfYaml):
         return getYamlContent
     else:
@@ -193,7 +203,7 @@ def registries_add(args, context) -> int:
         else:
             print(f"[ERR]: Registry already exists in project.yaml file.")
             return 1
-    
+
     write = write_to_project_yaml(projectYamlPath, projectYamlContent)
     if write == 1:
         return 1

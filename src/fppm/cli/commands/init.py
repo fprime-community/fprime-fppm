@@ -15,7 +15,7 @@ def create_project_yaml_file(args, context) -> int:
             f"[ERR]: This command needs to be ran in the F Prime project root directory."
         )
         return 1
-    
+
     gen_path = None
     try:
         source = (
@@ -39,7 +39,7 @@ def create_project_yaml_file(args, context) -> int:
     except Exception as e:
         print(f"[ERR]: {e}")
         return 1
-    
+
     # move project.yaml out of the generated directory
     try:
         os.rename(
@@ -53,22 +53,36 @@ def create_project_yaml_file(args, context) -> int:
     except Exception as e:
         print(f"[ERR]: {e}")
         return 1
-    
+
     # get keys of context
     keys = context.keys()
-    
+
     print(keys)
-    
-    if 'sac' not in keys:
-        if (input("[???]: Do you have the subtopology autocoder installed? (y/n): ") == "n"):
+
+    if "sac" not in keys:
+        if (
+            input("[???]: Do you have the subtopology autocoder installed? (y/n): ")
+            == "n"
+        ):
             print(f"[INFO]: Installing subtopology autocoder...")
             try:
-                subprocess.check_call(["git", "submodule", "add", "https://github.com/mosa11aei/fprime-subtopology-tool"])
+                subprocess.check_call(
+                    [
+                        "git",
+                        "submodule",
+                        "add",
+                        "https://github.com/mosa11aei/fprime-subtopology-tool",
+                    ]
+                )
             except Exception as e:
                 print(f"[ERR]: Error installing subtopology autocoder: {e}")
                 return 1
-            
-            print(f"[INFO]: Subtopology autocoder installed. Please follow the instructions in the tool's docs/README.md file to add the tool to your CMake process.")
 
-    print(f"[DONE]: Created project.yaml file in the current directory. You are ready to use F Prime packages.")
+            print(
+                f"[INFO]: Subtopology autocoder installed. Please follow the instructions in the tool's docs/README.md file to add the tool to your CMake process."
+            )
+
+    print(
+        f"[DONE]: Created project.yaml file in the current directory. You are ready to use F Prime packages."
+    )
     return 0

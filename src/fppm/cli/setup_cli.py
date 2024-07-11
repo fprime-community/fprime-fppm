@@ -2,6 +2,7 @@ import argparse
 import sys
 import fppm.cli.router as CMD_ROUTER
 
+
 # set up the "remove" subcommand parser
 def setup_remove_parser(subparsers) -> callable:
     remove_parser = subparsers.add_parser(
@@ -11,7 +12,7 @@ def setup_remove_parser(subparsers) -> callable:
         help="Remove a package from the project",
         add_help=True,
     )
-    
+
     remove_parser.add_argument(
         "--package",
         "-p",
@@ -19,15 +20,16 @@ def setup_remove_parser(subparsers) -> callable:
         help="The name of the package to remove",
         required=False,
     )
-    
+
     remove_parser.add_argument(
         "--project-yaml-path",
         type=str,
         help="The relative path to the project.yaml file",
         required=False,
     )
-    
+
     return remove_parser
+
 
 # set up the "config" subcommand parser
 def setup_config_parser(subparsers) -> callable:
@@ -38,7 +40,7 @@ def setup_config_parser(subparsers) -> callable:
         help="Configure F Prime packages",
         add_help=True,
     )
-    
+
     config_parser.add_argument(
         "--generate",
         "-g",
@@ -46,7 +48,7 @@ def setup_config_parser(subparsers) -> callable:
         help="Generate configuration fillables for a package",
         required=False,
     )
-    
+
     config_parser.add_argument(
         "--apply",
         "-a",
@@ -54,15 +56,16 @@ def setup_config_parser(subparsers) -> callable:
         help="Apply a set of configuration fillables to a package",
         required=False,
     )
-    
+
     config_parser.add_argument(
         "--project-yaml-path",
         type=str,
         help="The relative path to the project.yaml file",
         required=False,
     )
-    
+
     return config_parser
+
 
 # setup the "install" subcommand parser
 def setup_install_parser(subparsers) -> callable:
@@ -73,7 +76,7 @@ def setup_install_parser(subparsers) -> callable:
         help="Install a package from the registries or via git URL",
         add_help=True,
     )
-    
+
     install_parser.add_argument(
         "--package",
         "-p",
@@ -81,7 +84,7 @@ def setup_install_parser(subparsers) -> callable:
         help="The name (or Git URL) of the package to install",
         required=False,
     )
-    
+
     install_parser.add_argument(
         "--version",
         "-v",
@@ -89,22 +92,23 @@ def setup_install_parser(subparsers) -> callable:
         help="The version of the package to install",
         required=False,
     )
-    
+
     install_parser.add_argument(
         "--project-yaml-path",
         type=str,
         help="The relative path to the project.yaml file",
         required=False,
     )
-    
+
     install_parser.add_argument(
         "--project",
         type=str,
         help="Install all packages in the project.yaml file",
         required=False,
     )
-    
+
     return install_parser
+
 
 # setup the "registries" subcommand parser
 def setup_registries_parser(subparsers) -> callable:
@@ -117,7 +121,11 @@ def setup_registries_parser(subparsers) -> callable:
     )
 
     registries_parser.add_argument(
-        "--validate", "-v", action=argparse.BooleanOptionalAction, help="Validate the package registries", required=False,
+        "--validate",
+        "-v",
+        action=argparse.BooleanOptionalAction,
+        help="Validate the package registries",
+        required=False,
     )
 
     registries_parser.add_argument(
