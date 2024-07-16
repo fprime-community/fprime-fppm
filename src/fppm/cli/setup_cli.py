@@ -50,14 +50,6 @@ def setup_config_parser(subparsers) -> callable:
     )
 
     config_parser.add_argument(
-        "--apply",
-        "-a",
-        type=str,
-        help="Apply a set of configuration fillables to a package",
-        required=False,
-    )
-
-    config_parser.add_argument(
         "--project-yaml-path",
         type=str,
         help="The relative path to the project.yaml file",
