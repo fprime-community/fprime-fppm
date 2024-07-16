@@ -6,6 +6,7 @@ import fppm.cli.commands.install as cmd_install
 import fppm.cli.commands.config as cmd_config
 import fppm.cli.commands.remove as cmd_remove
 import sys
+from fppm.cli.utils import bcolors
 
 ROUTER = {
     "new": cmd_new.create_new_package_yml,
@@ -24,8 +25,8 @@ def route_commands(command, args: list) -> int:
             sys.exit(1)
         return 0
     except KeyError as e:
-        print(f"[ERR]: {e}")
+        print(f"{bcolors.FAIL}[ERR]: {e}{bcolors.ENDC}")
         sys.exit(1)
     except Exception as e:
-        print(f"[ERR]: {e}")
+        print(f"{bcolors.FAIL}[ERR]: {e}{bcolors.ENDC}")
         sys.exit(1)
