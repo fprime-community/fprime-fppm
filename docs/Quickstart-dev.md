@@ -63,7 +63,7 @@ You can also add components to the package by using `fprime-tools`:
 fprime-util new --component
 ```
 
-Lastly, you can add "config objects", which are files that users can utilize to configure your package. Config objects have certain syntax, and need to be specifically identified in the `package.yaml` file. Please reference the [config objects document](./ConfigObjects.md) for more information.
+Lastly, you can add "config objects", which are files that users can utilize to configure your package. Config objects are `fpp` files that configure your subtopology, components, or otherwise. They should be listed in your `package.yaml` under the `config_objects` key.
 
 ## Distribution
 

@@ -6,5 +6,3 @@
 - [Quickstart Guide: Package Devs](./Quickstart-dev.md)
 - [Quickstart Guide: Package Users](./Quickstart-user.md)
 - [Package Registries in fppm](./Registries.md)
-- [Config Objects: an Overview](ConfigObjects.md)
-
