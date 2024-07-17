@@ -236,7 +236,7 @@ def generate_config_fillables(args, context):
             configDir = str(settings['config_directory'])
             
             if "fprime" in configDir.split("/"):
-                print(f"{FppmUtils.bcolors.FAIL}[ERR]: No output directory specified for config object [{configObject}], and F Prime config folder not copied.{FppmUtils.bcolors.ENDC}")
+                print(f"{FppmUtils.bcolors.FAIL}[ERR]: No output directory specified for config object [{configObject}], and F Prime config folder not configured in settings.ini.{FppmUtils.bcolors.ENDC}")
                 return 1
             else:
                 shutil.copy(
@@ -244,6 +244,10 @@ def generate_config_fillables(args, context):
                     f"{configDir}"
                 )
                 print(f"{FppmUtils.bcolors.OKGREEN}[DONE]: Moved config object [{configObject}] to [{configDir}].{FppmUtils.bcolors.ENDC}")
+            
+                if ".fpp" in configObject:
+                    print(f"{FppmUtils.bcolors.WARNING}[WARN]: Output file {configObject} is an FPP file; remember to add it as a source in CMakeLists.txt.{FppmUtils.bcolors.ENDC}")
+                    
                 continue
 
         create_fillable(
