@@ -341,6 +341,29 @@ def apply_config_fillables(args, context):
             else:
                 metaVarContent[key] = fillableContent[key]
                 
+                
+        if "__pre_hook" in metaVarContent.keys():
+            prePrompt = FppmUtils.prompt(
+                f"[INFO]: Pre-hook script [{metaVarContent['__pre_hook']}] provided by package developer. Do you want to execute it? Make sure you trust the package developer [y/n]: ", ["y", "n"]
+            )
+            
+            if prePrompt.lower() == "n":
+                print(f"[INFO]: Skipping pre-hook script [{metaVarContent['__pre_hook']}].")
+                del metaVarContent['__pre_hook']
+            else:
+                FppmUtils.print_warning(f"[INFO]: Pre-hook script [{metaVarContent['__pre_hook']}] will be executed.")
+                
+        if "__post_hook" in metaVarContent.keys():
+            postPrompt = FppmUtils.prompt(
+                f"[INFO]: Post-hook script [{metaVarContent['__post_hook']}] provided by package developer. Do you want to execute it? Make sure you trust the package developer [y/n]: ", ["y", "n"]
+            )
+            
+            if postPrompt.lower() == "n":
+                print(f"[INFO]: Skipping post-hook script [{metaVarContent['__post_hook']}].")
+                del metaVarContent['__post_hook']
+            else:
+                FppmUtils.print_warning(f"[INFO]: Post-hook script [{metaVarContent['__post_hook']}] will be executed.")
+                            
         if "__pre_hook" in metaVarContent.keys():
             totalPath = str(Path(f"_fprime_packages/{packageFolder}/{metaVarContent['__pre_hook']}").absolute())
             
