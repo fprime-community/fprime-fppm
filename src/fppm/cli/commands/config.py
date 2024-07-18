@@ -480,6 +480,10 @@ def apply_config_fillables(args, context):
                         shutil.move(
                             f"{actual_cookiecutter}/{file}", f"{packageFolder}.fillables/out"
                         )
+                else:
+                    shutil.move(
+                        f"{actual_cookiecutter}/{file}", f"{packageFolder}.fillables/out"
+                    )
 
         shutil.rmtree(actual_cookiecutter, ignore_errors=True)
         shutil.rmtree(f"__TMP__", ignore_errors=True)
