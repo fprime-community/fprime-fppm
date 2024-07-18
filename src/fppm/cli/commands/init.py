@@ -57,8 +57,6 @@ def create_project_yaml_file(args, context) -> int:
     # get keys of context
     keys = context.keys()
 
-    print(keys)
-
     if "sac" not in keys:
         if (
             input("[???]: Do you have the subtopology autocoder installed? (y/n): ")
