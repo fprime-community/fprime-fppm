@@ -73,11 +73,8 @@ The user can then complete this file, and run `fppm config --apply` on the packa
 Metavars are bits of metadata that you can ship in your config object. These are predominantly only good for `fppm`, but there may be a time where your end user may want to edit these. Metavars transfer over to the config object's fillable, and are written with similar annotation syntax as the config object description:
 
 - `@! output = <path>` is the path where the generated config file from the fillable is moved to.
-- `@! pre_hook = <path/to/pythonScript.py>` is the path to your prehook script.
-- `@! post_hook = <path/to/pythonScript.py>` is the path to your posthook script.
-
-> [!IMPORTANT]
-> Note that currently, pre and post hooks are not yet implemented, as designs for them and security considerations are being considered.
+- `@! pre_hook = <path/to/pythonScript.py>` is the path to your prehook script (.py, relative to package root).
+- `@! post_hook = <path/to/pythonScript.py>` is the path to your posthook script (.py, relative to package root).
 
 Let's take the above `TopologyDefs.hpp` example and add the `output` metavar to it:
 
@@ -112,3 +109,50 @@ __output: myCustomFolder
 ```
 
 Note that files that do not have cookiecutter variables *can still* have metavars.
+
+### Config Hooks
+
+As you may notice, there are metavars for "pre-" and "post-hooks" for your config object. Config hooks are Python files that contain functions that may be useful in the fillables phase (pre-hook) or in the generated config file (post-hook) phase. For example, you may want to verify that certain variables in a fillable follow a certain standard (pre-hook), or you may want to verify the contents of the output file (post-hook).
+
+In the background, fppm runs:
+
+```bash
+# pre-hook
+<path-to-python> <path-to-your-hook-script.py> -f <abs/path/to/fillable.yaml>
+
+# post-hook
+<path-to-python> <path-to-your-hook-script.py> -g <abs/path/to/generated-config-file>
+```
+
+Config hooks always execute when the user runs `fppm config --apply <yourPackage>`. In the pre-hook, your script is passed the user-completed YAML fillable file. In the post-hook, your script is passed the cookiecutter-generated config file.
+
+For your script to be compatible with the command line style of passing the files, start with the following template in your Python file:
+
+```py
+import argparse
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-f",
+        "--fillable",
+        type=str,
+        required=False,
+    )
+    parser.add_argument(
+        "-g",
+        "--generated",
+        type=str,
+        required=False,
+    )
+    
+    args = parser.parse_args()
+    
+    if args.fillable:
+        # == YOUR FUNCTION HERE ==
+        pass
+        
+    if args.generated:
+        # == YOUR FUNCTION HERE ==
+        pass
+```
