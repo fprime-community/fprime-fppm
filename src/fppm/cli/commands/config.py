@@ -8,6 +8,7 @@ import fppm.cli.commands.registries as cmd_registries
 from cookiecutter.exceptions import OutputDirExistsException
 from cookiecutter.main import cookiecutter
 import fppm.cli.utils as FppmUtils
+import fppm.cli.config_hooks as ConfigHooks
 
 
 def pull_cookiecutter_variables(configObject, packagePath):
@@ -340,6 +341,19 @@ def apply_config_fillables(args, context):
             else:
                 metaVarContent[key] = fillableContent[key]
                 
+        if "__pre_hook" in metaVarContent.keys():
+            totalPath = str(Path(f"_fprime_packages/{packageFolder}/{metaVarContent['__pre_hook']}").absolute())
+            
+            if os.path.exists(totalPath) == False:
+                FppmUtils.print_error(f"[ERR]: Pre-hook script [{metaVarContent['__pre_hook']}] not found.")
+            else:
+                pre_hook_output = ConfigHooks.pre_hook(totalPath, str(Path(fillable).absolute()))
+                
+                if pre_hook_output == 1:
+                    return 1
+                
+                FppmUtils.print_warning(f"[INFO]: Pre-hook printed: {pre_hook_output}")
+                
 
         cookiecutter_name = "{{ cookiecutter.temporary___ }}"
 
@@ -379,8 +393,8 @@ def apply_config_fillables(args, context):
 
         for file in os.listdir(actual_cookiecutter):
             if ".fpp" in file:
-                print(
-                    f"\n[!!!] Output file {file} is an FPP file; remember to add it as a source in CMakeLists.txt. \n"
+                FppmUtils.print_warning(
+                    f"[!!!] Output file {file} is an FPP file; remember to add it as a source in CMakeLists.txt."
                 )
 
             with open(f"{actual_cookiecutter}/{file}", "r") as fileContent:
@@ -418,6 +432,19 @@ def apply_config_fillables(args, context):
 
             with open(f"{actual_cookiecutter}/{file}", "w") as fileContent:
                 fileContent.write(content)
+                
+            if "__post_hook" in metaVarContent.keys():
+                totalPath = str(Path(f"_fprime_packages/{packageFolder}/{metaVarContent['__post_hook']}").absolute())
+                
+                if os.path.exists(totalPath) == False:
+                    FppmUtils.print_error(f"[ERR]: Post-hook script [{metaVarContent['__post_hook']}] not found.")
+                else:
+                    post_hook_output = ConfigHooks.post_hook(totalPath, str(Path(f"{actual_cookiecutter}/{file}").absolute()))
+                    
+                    if post_hook_output == 1:
+                        return 1
+                    
+                    FppmUtils.print_warning(f"[INFO]: Post-hook printed: {post_hook_output}")
                             
             if "__output" in metaVarContent.keys():
                 if os.path.exists(f"{metaVarContent['__output']}/{file}"):
