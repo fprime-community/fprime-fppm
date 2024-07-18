@@ -161,14 +161,19 @@ def install_package(args, context):
                 subprocess.check_call(
                     ["git", "fetch"], stderr=subprocess.PIPE, stdout=subprocess.PIPE
                 )
+                
+                stashed = subprocess.check_call(
+                    ['git', 'stash'],
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE
+                )
+                
                 if "v" == packageVersion[0]:
                     subprocess.check_call(
                         [
                             "git",
                             "checkout",
-                            f"tags/{packageVersion}",
-                            "--branch",
-                            package["info"]["branch"],
+                            f"tags/{packageVersion}"
                         ],
                         stderr=subprocess.PIPE,
                         stdout=subprocess.PIPE,
