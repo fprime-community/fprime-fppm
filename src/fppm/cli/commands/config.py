@@ -105,7 +105,6 @@ def pull_cookiecutter_variables(configObject, packagePath):
                 doNotAdd = False
 
                 for vars in cookiecutterVariables:
-                    print(vars["variable"], variable)
                     if vars["variable"] in variable:
                         doNotAdd = True
 
