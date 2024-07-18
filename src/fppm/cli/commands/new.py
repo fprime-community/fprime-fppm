@@ -5,6 +5,7 @@ from cookiecutter.main import cookiecutter
 from pathlib import Path
 import sys
 import subprocess
+import fppm.cli.utils as FppmUtils
 
 
 # context is usually empty unless unit testing
@@ -17,7 +18,7 @@ def create_new_package_yml(args, context):
                 ["git", "ls-remote", args.git_url], capture_output=True, check=True
             )
         except subprocess.CalledProcessError as e:
-            print(f"[ERR]: Invalid git URL provided. Please provide a valid git URL.")
+            FppmUtils.print_error(f"[ERR]: Invalid git URL provided. Please provide a valid git URL.")
             return 1
 
     print(f"[INFO]: Creating new package.yml file...")
@@ -38,7 +39,7 @@ def create_new_package_yml(args, context):
 
         gen_path = Path(actual_cookiecutter).resolve()
     except OutputDirExistsException as e:
-        print(f"{e}", file=sys.stderr)
+        FppmUtils.print_error(f"{e}", file=sys.stderr)
         return 1
 
     print(f"\n")  # just for prettiness
@@ -60,17 +61,13 @@ def create_new_package_yml(args, context):
             skipGitSetup = True
     else:
         # for user input
+        askUserGit = FppmUtils.prompt("[???]: Would you like to initialize this package as a git repo? (y/n): ", ['y', 'n'])
         if userProvidedGitURL:
             print(
                 f"[INFO]: Git url was passed in. Initializing package as a git repo..."
             )
             skipGitSetup = False
-        elif (
-            input(
-                "[???] Would you like to initialize this package as a git repo? (y/n): "
-            )
-            == "y"
-        ):
+        elif askUserGit == "y":
             print(f"[INFO]: Initializing package as a git repo...")
             skipGitSetup = False
         else:
@@ -96,7 +93,7 @@ def create_new_package_yml(args, context):
                 ["git", "init"], cwd=gen_path, capture_output=True, check=True
             )
         except subprocess.CalledProcessError as e:
-            print(f"[ERR]: Failed to set up package as a git repo: {e}")
+            FppmUtils.print_error(f"[ERR]: Failed to set up package as a git repo: {e}")
             return 1
 
         if args.git_url is not None:
@@ -109,10 +106,10 @@ def create_new_package_yml(args, context):
                     check=True,
                 )
             except subprocess.CalledProcessError as e:
-                print(f"[ERR]: Failed to set up remote origin. {e}")
+                FppmUtils.print_error(f"[ERR]: Failed to set up remote origin. {e}")
                 return 1
 
-    print(
+    FppmUtils.print_success(
         f"""\n
 [DONE]: Generated package.yml file inside {gen_path}
 
