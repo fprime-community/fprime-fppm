@@ -4,6 +4,7 @@ from cookiecutter.main import cookiecutter
 from pathlib import Path
 import sys
 import subprocess
+import fppm.cli.utils as FppmUtils
 
 
 def create_project_yaml_file(args, context) -> int:
@@ -11,7 +12,7 @@ def create_project_yaml_file(args, context) -> int:
     try:
         os.path.exists("./fprime")
     except FileNotFoundError as e:
-        print(
+        FppmUtils.print_error(
             f"[ERR]: This command needs to be ran in the F Prime project root directory."
         )
         return 1
@@ -34,10 +35,10 @@ def create_project_yaml_file(args, context) -> int:
 
         gen_path = Path(actual_cookiecutter).resolve()
     except OutputDirExistsException as e:
-        print(f"{e}", file=sys.stderr)
+        FppmUtils.print_error(f"{e}")
         return 1
     except Exception as e:
-        print(f"[ERR]: {e}")
+        FppmUtils.print_error(f"[ERR]: {e}")
         return 1
 
     # move project.yaml out of the generated directory
@@ -48,20 +49,18 @@ def create_project_yaml_file(args, context) -> int:
         )
         os.rmdir(gen_path)
     except FileNotFoundError as e:
-        print(f"[ERR]: {e}")
+        FppmUtils.print_error(f"[ERR]: {e}")
         return 1
     except Exception as e:
-        print(f"[ERR]: {e}")
+        FppmUtils.print_error(f"[ERR]: {e}")
         return 1
 
     # get keys of context
     keys = context.keys()
 
     if "sac" not in keys:
-        if (
-            input("[???]: Do you have the subtopology autocoder installed? (y/n): ")
-            == "n"
-        ):
+        askIf = FppmUtils.prompt("[???]: Do you have the subtopology autocoder installed? (y/n): ", ["y", "n"])
+        if askIf.lower() == "n":
             print(f"[INFO]: Installing subtopology autocoder...")
             try:
                 subprocess.check_call(
@@ -73,14 +72,14 @@ def create_project_yaml_file(args, context) -> int:
                     ]
                 )
             except Exception as e:
-                print(f"[ERR]: Error installing subtopology autocoder: {e}")
+                FppmUtils.print_error(f"[ERR]: Error installing subtopology autocoder: {e}")
                 return 1
 
             print(
                 f"[INFO]: Subtopology autocoder installed. Please follow the instructions in the tool's docs/README.md file to add the tool to your CMake process."
             )
 
-    print(
+    FppmUtils.print_success(
         f"[DONE]: Created project.yaml file in the current directory. You are ready to use F Prime packages."
     )
     return 0

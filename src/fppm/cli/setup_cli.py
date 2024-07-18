@@ -1,6 +1,7 @@
 import argparse
 import sys
 import fppm.cli.router as CMD_ROUTER
+import fppm.cli.utils as FppmUtils
 
 
 # set up the "remove" subcommand parser
@@ -199,11 +200,11 @@ def start_cli_parser(args: list):
     parsed, unknown = parser.parse_known_args(args)
 
     if len(unknown) > 0:
-        print(f"[ERR] Unknown arguments: {unknown}")
+        FppmUtils.print_error(f"[ERR] Unknown arguments: {unknown}")
         sys.exit(1)
 
     if parsed.command is None:
-        print(f"[ERR] No command provided")
+        FppmUtils.print_error(f"[ERR] No command provided")
         sys.exit(1)
 
     # route the command

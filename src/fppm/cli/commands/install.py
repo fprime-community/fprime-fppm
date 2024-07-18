@@ -5,6 +5,7 @@ import fppm.cli.commands.registries as cmd_registries
 import glob
 import subprocess
 from argparse import Namespace
+import fppm.cli.utils as FppmUtils
 
 
 def setup_ephemeral():
@@ -16,12 +17,11 @@ def setup_ephemeral():
         pass
 
     if existsAlready == False:
-        if (
-            input(
-                "[???]: Would you like to add the _fprime_packages directory to your .gitignore file? (y/n): "
-            )
-            == "y"
-        ):
+        askIf = FppmUtils.prompt(
+            "[???]: Would you like to add the _fprime_packages directory to your .gitignore file? (y/n): ",
+            ['y', 'n']
+        )
+        if askIf == "y":
             # look for a .gitignore file
             if os.path.exists(".gitignore"):
                 try:
@@ -35,7 +35,7 @@ def setup_ephemeral():
                             gitignore.write("\n# F' packages")
                             gitignore.write("\n/_fprime_packages/")
                 except Exception as e:
-                    print(
+                    FppmUtils.print_error(
                         f"[ERR]: Error adding _fprime_packages to .gitignore file: {e}"
                     )
                     return 1
@@ -70,16 +70,16 @@ def add_package_to_cmake(folderName):
     if cmakeLineToAdd in open(cmakeFiles).read():
         return 0
 
-    if (
-        input(
-            f"[???]: Would you like to include the _fprime_packages CMakeLists.txt file to {cmakeFiles}? (y/n): "
-        )
-        == "y"
-    ):
+    askCMake = FppmUtils.prompt(
+        f"[???]: Would you like to include the _fprime_packages CMakeLists.txt file to {cmakeFiles}? (y/n): ",
+        ['y', 'n']
+    )
+
+    if askCMake == "y":
         with open(cmakeFiles, "a") as cmake:
             cmake.write(cmakeLineToAdd)
 
-    print(f"[DONE]: Added _fprime_packages to {cmakeFiles}")
+    FppmUtils.print_success(f"[DONE]: Added _fprime_packages to {cmakeFiles}")
     return 0
 
 
@@ -94,7 +94,7 @@ def install_project_yaml(args, context):
     path, content = cmd_registries.open_project_yaml(projectYamlPath)
 
     if content["packages"] is None:
-        print(f"[ERR]: No packages found in project.yaml file.")
+        FppmUtils.print_error(f"[ERR]: No packages found in project.yaml file.")
         return 1
 
     for package in content["packages"]:
@@ -137,7 +137,7 @@ def install_package(args, context):
         try:
             existingPackage = glob.glob(f"_fprime_packages/{packageFolderName}*")
         except Exception as e:
-            print(f"[ERR]: Error checking for existing package: {e}")
+            FppmUtils.print_error(f"[ERR]: Error checking for existing package: {e}")
             return 1
 
         packageVersion = None
@@ -147,7 +147,7 @@ def install_package(args, context):
             if package["info"]["stable"] is not None:
                 packageVersion = package["info"]["stable"]
             else:
-                print(
+                FppmUtils.print_error(
                     f"[ERR]: No stable version found for package [{args.package}]. Please provide a package version to install."
                 )
                 return 1
@@ -184,11 +184,11 @@ def install_package(args, context):
                 versionTextTernary = (
                     "version" if "v" == packageVersion[0] else "commit hash"
                 )
-                print(
+                FppmUtils.print_success(
                     f"[DONE]: Changed installed package [{args.package}] to {versionTextTernary} {packageVersion}"
                 )
             except Exception as e:
-                print(f"[ERR]: Error changing package version: {e}")
+                FppmUtils.print_error(f"[ERR]: Error changing package version: {e}")
                 return 1
         else:
             # clone the package
@@ -231,11 +231,11 @@ def install_package(args, context):
                     "version" if "v" == packageVersion[0] else "commit hash"
                 )
 
-                print(
+                FppmUtils.print_success(
                     f"[DONE]: Installed package [{args.package}] at {versionTextTernary} {packageVersion}"
                 )
             except Exception as e:
-                print(f"[ERR]: Error cloning package: {e}")
+                FppmUtils.print_error(f"[ERR]: Error cloning package: {e}")
                 return 1
 
         # add version to end of package folder
@@ -248,7 +248,7 @@ def install_package(args, context):
         try:
             os.rename(packagePath, f"_fprime_packages/{packageFolderName}")
         except Exception as e:
-            print(f"[ERR]: Error renaming package folder: {e}")
+            FppmUtils.print_error(f"[ERR]: Error renaming package folder: {e}")
             return 1
 
         # add package to project.yaml
@@ -272,9 +272,9 @@ def install_package(args, context):
                 projectYamlContent["packages"].append(
                     {"name": args.package, "version": packageVersion}
                 )
-                print(f"[DONE]: Added package [{args.package}] to project.yaml file.")
+                FppmUtils.print_success(f"[DONE]: Added package [{args.package}] to project.yaml file.")
             else:
-                print(
+                FppmUtils.print_success(
                     f"[DONE]: Updated package [{args.package}] to version {packageVersion} in project.yaml file."
                 )
 
@@ -290,7 +290,7 @@ def install_package(args, context):
                 return 1
 
         except Exception as e:
-            print(f"[ERR]: Error adding package to project.yaml: {e}")
+            FppmUtils.print_error(f"[ERR]: Error adding package to project.yaml: {e}")
             return 1
     else:
         pass

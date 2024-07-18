@@ -2,12 +2,13 @@ import validators
 import requests
 import yaml
 import os
+import fppm.cli.utils as FppmUtils
 
 
 def shortname_to_git(project_yaml_path, shortname: str):
     # shortnames must be in the format "namespace/package"
     if "/" not in shortname:
-        print(
+        FppmUtils.print_error(
             f"[ERR]: Invalid shortname [{shortname}]: must be in the format 'namespace/package'."
         )
         return 1
@@ -42,11 +43,11 @@ def shortname_to_git(project_yaml_path, shortname: str):
                 pass
 
     if len(allLocatedPackages) == 0:
-        print(f"[ERR]: No packages found with shortname [{shortname}] in any registry.")
+        FppmUtils.print_error(f"[ERR]: No packages found with shortname [{shortname}] in any registry.")
         return 1
 
     if len(allLocatedPackages) > 1:
-        print(
+        FppmUtils.print_warning(
             f"[INFO]: Multiple packages found with shortname [{shortname}]. Please specify which one you want."
         )
         for i in range(len(allLocatedPackages)):
@@ -57,12 +58,12 @@ def shortname_to_git(project_yaml_path, shortname: str):
         try:
             userChoice = int(input("[???] Please choose a package: "))
             if userChoice < 1 or userChoice > len(allLocatedPackages):
-                print(f"[ERR]: Invalid choice.")
+                FppmUtils.print_error(f"[ERR]: Invalid choice.")
                 return 1
             else:
                 return allLocatedPackages[userChoice - 1]
         except ValueError:
-            print(f"[ERR]: Invalid choice.")
+            FppmUtils.print_error(f"[ERR]: Invalid choice.")
             return 1
     else:
         return allLocatedPackages[0]
@@ -76,19 +77,19 @@ def get_registry(registry_url):
             if registry_url.endswith(".yaml"):  # https://stackoverflow.com/a/21059164
                 isRemoteYaml = True
             else:
-                print(f"[ERR]: Invalid URL [{registry_url}]: link must end in .yaml")
+                FppmUtils.print_error(f"[ERR]: Invalid URL [{registry_url}]: link must end in .yaml")
                 return 1
         else:
             # may be a relative path
             if os.path.exists(registry_url):
                 isRemoteYaml = False
             else:
-                print(
+                FppmUtils.print_error(
                     f"[ERR]: Invalid URL [{registry_url}]: link (local) does not exist or URL is malformed."
                 )
                 return 1
     else:
-        print(f"[ERR]: No URL provided. You should never see this exact error message.")
+        FppmUtils.print_error(f"[ERR]: No URL provided. You should never see this exact error message.")
         return 1
 
     getYamlContent = None
@@ -99,18 +100,18 @@ def get_registry(registry_url):
             with open(registry_url, "r") as f:
                 getYamlContent = yaml.safe_load(f)
     except requests.exceptions.RequestException as e:
-        print(f"[ERR]: Error obtaining registry [{registry_url}]: {e}")
+        FppmUtils.print_error(f"[ERR]: Error obtaining registry [{registry_url}]: {e}")
         return 1
 
     try:
         if isRemoteYaml:
             getYamlContent = yaml.safe_load(getYamlContent.content.decode("utf-8"))
     except yaml.YAMLError as e:
-        print(f"[ERR]: Error parsing YAML content of registry [{registry_url}]: {e}")
+        FppmUtils.print_error(f"[ERR]: Error parsing YAML content of registry [{registry_url}]: {e}")
         return 1
 
     if getYamlContent is None:
-        print(f"[ERR]: No content found in registry [{registry_url}].")
+        FppmUtils.print_error(f"[ERR]: No content found in registry [{registry_url}].")
         return 1
 
     return getYamlContent
@@ -133,7 +134,7 @@ def verify_registry(registry_url) -> int:
     if all(verificationsOfYaml):
         return getYamlContent
     else:
-        print(
+        FppmUtils.print_error(
             f"""
 [ERR]: Registry [{registry_url}] does not contain all necessary fields, which are:
 
@@ -160,7 +161,7 @@ def open_project_yaml(project_yaml_path) -> tuple:
                 projectYamlContent = yaml.safe_load(f)
                 projectYamlPath = project_yaml_path
             except yaml.YAMLError as e:
-                print(f"[ERR]: Error parsing file: {e}")
+                FppmUtils.print_error(f"[ERR]: Error parsing file: {e}")
                 return (1, 1)
     else:
         print(f"[INFO]: Opening ./project.yaml...")
@@ -169,7 +170,7 @@ def open_project_yaml(project_yaml_path) -> tuple:
                 projectYamlContent = yaml.safe_load(f)
                 projectYamlPath = "./project.yaml"
             except yaml.YAMLError as e:
-                print(f"[ERR]: Error parsing project.yaml file: {e}")
+                FppmUtils.print_error(f"[ERR]: Error parsing project.yaml file: {e}")
                 return (1, 1)
 
     return (projectYamlPath, projectYamlContent)
@@ -180,7 +181,7 @@ def write_to_project_yaml(projectYamlPath, projectYamlContent) -> int:
         try:
             yaml.dump(projectYamlContent, f, default_flow_style=False)
         except yaml.YAMLError as e:
-            print(f"[ERR]: Error writing to project.yaml file: {e}")
+            FppmUtils.print_error(f"[ERR]: Error writing to project.yaml file: {e}")
             return 1
     return 0
 
@@ -201,14 +202,14 @@ def registries_add(args, context) -> int:
         if args.add not in projectYamlContent["registries"]:
             projectYamlContent["registries"].append(args.add)
         else:
-            print(f"[ERR]: Registry already exists in project.yaml file.")
+            FppmUtils.print_error(f"[ERR]: Registry already exists in project.yaml file.")
             return 1
 
     write = write_to_project_yaml(projectYamlPath, projectYamlContent)
     if write == 1:
         return 1
 
-    print(f"[DONE]: Added registry [{args.add}] to project.yaml file.")
+    FppmUtils.print_success(f"[DONE]: Added registry [{args.add}] to project.yaml file.")
     return 0
 
 
@@ -218,7 +219,7 @@ def registries_validate(args, context) -> int:
         return 1
 
     if projectYamlContent["registries"] is None:
-        print(f"[ERR]: No registries found in project.yaml file.")
+        FppmUtils.print_error(f"[ERR]: No registries found in project.yaml file.")
         return 1
 
     validRegistries = []
@@ -227,7 +228,7 @@ def registries_validate(args, context) -> int:
         print(f"[INFO]: Validating registry: {registry}")
         yamlContent = verify_registry(registry)
         if yamlContent == 1:
-            print(f"[ERR]: Registry [{registry}] is invalid.")
+            FppmUtils.print_error(f"[ERR]: Registry [{registry}] is invalid.")
         else:
             validRegistries.append(registry)
 
@@ -237,7 +238,7 @@ def registries_validate(args, context) -> int:
     if write == 1:
         return 1
 
-    print(f"[DONE]: Validated all registries in project.yaml file.")
+    FppmUtils.print_success(f"[DONE]: Validated all registries in project.yaml file.")
 
 
 def registries_entrypoint(args, context) -> int:
@@ -248,5 +249,5 @@ def registries_entrypoint(args, context) -> int:
         print(f"[INFO]: Adding new package registry: {args.add}")
         return registries_add(args, context)
     else:
-        print(f"[ERR]: No arguments provided. Please provide a command.")
+        FppmUtils.print_error(f"[ERR]: No arguments provided. Please provide a command.")
         return 1

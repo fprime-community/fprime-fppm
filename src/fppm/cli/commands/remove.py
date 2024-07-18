@@ -1,7 +1,7 @@
 import fppm.cli.commands.registries as cmd_registries
 import glob
 import shutil
-import os
+import fppm.cli.utils as FppmUtils
 
 
 def remove_package(args, context):
@@ -17,14 +17,14 @@ def remove_package(args, context):
     try:
         existingPackage = glob.glob(f"_fprime_packages/{packageFolder}*")
     except Exception as e:
-        print(f"[ERR]: Error checking for existing package [{args.package}]: {e}")
+        FppmUtils.print_error(f"[ERR]: Error checking for existing package [{args.package}]: {e}")
         return 1
 
     for package in existingPackage:
         try:
             shutil.rmtree(package)
         except Exception as e:
-            print(f"[ERR]: Error removing package [{args.package}]: {e}")
+            FppmUtils.print_error(f"[ERR]: Error removing package [{args.package}]: {e}")
             return 1
 
     with open(f"_fprime_packages/CMakeLists.txt", "r") as f:
@@ -38,16 +38,12 @@ def remove_package(args, context):
     fillables = glob.glob(f"{packageFolder}.fillables")
 
     if len(fillables) > 0:
-        if (
-            input(
-                f"[???] Remove the fillables directory for package [{args.package}]: "
-            )
-            == "y"
-        ):
+        askRemoveFillables = FppmUtils.prompt("[???] Remove the fillables directory for package [{args.package}]? (y/n): ", ["y", "n"])
+        if askRemoveFillables == "y":
             try:
                 shutil.rmtree(fillables[0])
             except Exception as e:
-                print(
+                FppmUtils.print_error(
                     f"[ERR]: Error removing fillables directory for package [{args.package}]: {e}"
                 )
                 return 1
@@ -67,9 +63,9 @@ def remove_package(args, context):
                 projectYamlContent["packages"].remove(package)
                 break
     else:
-        print(f"[ERR]: No packages found in project.yaml file.")
+        FppmUtils.print_error(f"[ERR]: No packages found in project.yaml file.")
         return 1
 
     write = cmd_registries.write_to_project_yaml(projectYamlPath, projectYamlContent)
 
-    print(f"[DONE]: Removed package [{args.package}]")
+    FppmUtils.print_success(f"[DONE]: Removed package [{args.package}]")
