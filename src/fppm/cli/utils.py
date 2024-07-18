@@ -62,3 +62,12 @@ def openSettingsIni(path):
     
     settings = IniSettings()
     return settings.load(path)
+
+def print_success(msg):
+    print(f"{bcolors.OKGREEN}{msg}{bcolors.ENDC}")
+    
+def print_warning(msg):
+    print(f"{bcolors.WARNING}{msg}{bcolors.ENDC}")
+    
+def print_error(msg):
+    print(f"{bcolors.FAIL}{msg}{bcolors.ENDC}")
