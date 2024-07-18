@@ -35,7 +35,7 @@ def create_project_yaml_file(args, context) -> int:
 
         gen_path = Path(actual_cookiecutter).resolve()
     except OutputDirExistsException as e:
-        FppmUtils.print_error(f"{e}", file=sys.stderr)
+        FppmUtils.print_error(f"{e}")
         return 1
     except Exception as e:
         FppmUtils.print_error(f"[ERR]: {e}")

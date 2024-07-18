@@ -39,7 +39,7 @@ def create_new_package_yml(args, context):
 
         gen_path = Path(actual_cookiecutter).resolve()
     except OutputDirExistsException as e:
-        FppmUtils.print_error(f"{e}", file=sys.stderr)
+        FppmUtils.print_error(f"{e}")
         return 1
 
     print(f"\n")  # just for prettiness
