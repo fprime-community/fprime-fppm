@@ -72,7 +72,7 @@ def test_registries_add():
 
 def test_registries_validation():
     os.chdir(__file__.replace("fppm-cli.py", ""))
-    
+
     assert cmd_registries.verify_registry("blah") == 1  # should fail, invalid URL
     print(f"[INFO]: Test Registries.1 passed")
 

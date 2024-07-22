@@ -59,7 +59,10 @@ def create_project_yaml_file(args, context) -> int:
     keys = context.keys()
 
     if "sac" not in keys:
-        askIf = FppmUtils.prompt("[???]: Do you have the subtopology autocoder installed? (y/n): ", ["y", "n"])
+        askIf = FppmUtils.prompt(
+            "[???]: Do you have the subtopology autocoder installed? (y/n): ",
+            ["y", "n"],
+        )
         if askIf.lower() == "n":
             print(f"[INFO]: Installing subtopology autocoder...")
             try:
@@ -72,7 +75,9 @@ def create_project_yaml_file(args, context) -> int:
                     ]
                 )
             except Exception as e:
-                FppmUtils.print_error(f"[ERR]: Error installing subtopology autocoder: {e}")
+                FppmUtils.print_error(
+                    f"[ERR]: Error installing subtopology autocoder: {e}"
+                )
                 return 1
 
             print(

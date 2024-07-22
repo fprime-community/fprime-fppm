@@ -19,7 +19,7 @@ def setup_ephemeral():
     if existsAlready == False:
         askIf = FppmUtils.prompt(
             "[???]: Would you like to add the _fprime_packages directory to your .gitignore file? (y/n): ",
-            ['y', 'n']
+            ["y", "n"],
         )
         if askIf == "y":
             # look for a .gitignore file
@@ -72,7 +72,7 @@ def add_package_to_cmake(folderName):
 
     askCMake = FppmUtils.prompt(
         f"[???]: Would you like to include the _fprime_packages CMakeLists.txt file to {cmakeFiles}? (y/n): ",
-        ['y', 'n']
+        ["y", "n"],
     )
 
     if askCMake == "y":
@@ -161,20 +161,14 @@ def install_package(args, context):
                 subprocess.check_call(
                     ["git", "fetch"], stderr=subprocess.PIPE, stdout=subprocess.PIPE
                 )
-                
+
                 stashed = subprocess.check_call(
-                    ['git', 'stash'],
-                    stderr=subprocess.PIPE,
-                    stdout=subprocess.PIPE
+                    ["git", "stash"], stderr=subprocess.PIPE, stdout=subprocess.PIPE
                 )
-                
+
                 if "v" == packageVersion[0]:
                     subprocess.check_call(
-                        [
-                            "git",
-                            "checkout",
-                            f"tags/{packageVersion}"
-                        ],
+                        ["git", "checkout", f"tags/{packageVersion}"],
                         stderr=subprocess.PIPE,
                         stdout=subprocess.PIPE,
                     )
@@ -214,11 +208,7 @@ def install_package(args, context):
 
                 if "v" == packageVersion[0]:
                     subprocess.check_call(
-                        [
-                            "git",
-                            "checkout",
-                            f"tags/{packageVersion}"
-                        ],
+                        ["git", "checkout", f"tags/{packageVersion}"],
                         stderr=subprocess.PIPE,
                         stdout=subprocess.PIPE,
                     )
@@ -275,7 +265,9 @@ def install_package(args, context):
                 projectYamlContent["packages"].append(
                     {"name": args.package, "version": packageVersion}
                 )
-                FppmUtils.print_success(f"[DONE]: Added package [{args.package}] to project.yaml file.")
+                FppmUtils.print_success(
+                    f"[DONE]: Added package [{args.package}] to project.yaml file."
+                )
             else:
                 FppmUtils.print_success(
                     f"[DONE]: Updated package [{args.package}] to version {packageVersion} in project.yaml file."

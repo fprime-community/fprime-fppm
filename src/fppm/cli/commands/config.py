@@ -43,12 +43,8 @@ def pull_cookiecutter_variables(configObject, packagePath):
         cookiecutterVariables.append(
             {"context": "FILE NAME", "variable": variable, "line": 0}
         )
-        
-    metadataVars = {
-        'output': None,
-        'pre_hook': None,
-        'post_hook': None
-    }
+
+    metadataVars = {"output": None, "pre_hook": None, "post_hook": None}
 
     configDesc = False
     for line in configObjectContent.split("\n"):
@@ -63,21 +59,21 @@ def pull_cookiecutter_variables(configObject, packagePath):
         if configDesc:
             configDescription += "# " + line.strip() + "\n"
             continue
-        
+
         if "@! output = " in line:
-            metadataVars['output'] = line.split("@! output = ")[1].strip()
+            metadataVars["output"] = line.split("@! output = ")[1].strip()
             continue
-        
+
         if "@! pre_hook = " in line:
-            metadataVars['pre_hook'] = line.split("@! pre_hook = ")[1].strip()
-            if '.py' not in metadataVars['pre_hook']:
-                metadataVars['pre_hook'] = None
+            metadataVars["pre_hook"] = line.split("@! pre_hook = ")[1].strip()
+            if ".py" not in metadataVars["pre_hook"]:
+                metadataVars["pre_hook"] = None
             continue
-        
+
         if "@! post_hook = " in line:
-            metadataVars['post_hook'] = line.split("@! post_hook = ")[1].strip()
-            if '.py' not in metadataVars['post_hook']:
-                metadataVars['post_hook'] = None
+            metadataVars["post_hook"] = line.split("@! post_hook = ")[1].strip()
+            if ".py" not in metadataVars["post_hook"]:
+                metadataVars["post_hook"] = None
             continue
 
         if "{{" in line and "}}" in line:
@@ -123,7 +119,9 @@ def pull_cookiecutter_variables(configObject, packagePath):
     return (cookiecutterVariables, configDescription, metadataVars)
 
 
-def create_fillable(variables, description, metavars, configObject, packagePath, fillablesPath):
+def create_fillable(
+    variables, description, metavars, configObject, packagePath, fillablesPath
+):
     """
     Creates a fillable object file for a config object
 
@@ -144,12 +142,14 @@ def create_fillable(variables, description, metavars, configObject, packagePath,
         fillableFile.write("# === START METADATA: DO NOT EDIT ===\n\n")
         fillableFile.write(f"__package_path: {packagePath}\n")
         fillableFile.write(f"__config_object: {configObject}\n")
-        if metavars['output'] is not None:
-            fillableFile.write("\n# === METADATA VARIABLES: Do not edit if you don't know what you're doing! ===\n\n")
+        if metavars["output"] is not None:
+            fillableFile.write(
+                "\n# === METADATA VARIABLES: Do not edit if you don't know what you're doing! ===\n\n"
+            )
             fillableFile.write(f"__output: {metavars['output']}\n")
-        if metavars['pre_hook'] is not None:
+        if metavars["pre_hook"] is not None:
             fillableFile.write(f"__pre_hook: {metavars['pre_hook']}\n")
-        if metavars['post_hook'] is not None:
+        if metavars["post_hook"] is not None:
             fillableFile.write(f"__post_hook: {metavars['post_hook']}\n")
         fillableFile.write("\n# === END METADATA ===\n\n")
 
@@ -168,7 +168,9 @@ def create_fillable(variables, description, metavars, configObject, packagePath,
             )
             fillableFile.write(f"{variable['variable']}: << FILL IN >>\n\n")
 
-    print(f"{FppmUtils.bcolors.OKGREEN}[DONE]: Created fillable for config object [{configObject}].{FppmUtils.bcolors.ENDC}")
+    print(
+        f"{FppmUtils.bcolors.OKGREEN}[DONE]: Created fillable for config object [{configObject}].{FppmUtils.bcolors.ENDC}"
+    )
 
 
 def update_gitignore():
@@ -194,7 +196,9 @@ def update_gitignore():
                     gitignore.write("\n# F' package fillables")
                     gitignore.write("\n/*.fillables/")
         except Exception as e:
-            print(f"{FppmUtils.bcolors.FAIL}[ERR]: Error adding *.fillables to .gitignore file: {e}{FppmUtils.bcolors.ENDC}")
+            print(
+                f"{FppmUtils.bcolors.FAIL}[ERR]: Error adding *.fillables to .gitignore file: {e}{FppmUtils.bcolors.ENDC}"
+            )
             return 1
 
 
@@ -230,24 +234,29 @@ def generate_config_fillables(args, context):
             os.mkdir(f"{packageFolder}.fillables")
         except FileExistsError:
             pass
-        
-        if len(vars) == 0 and desc == "" and metavars['output'] is None:
+
+        if len(vars) == 0 and desc == "" and metavars["output"] is None:
             settings = FppmUtils.openSettingsIni(Path("settings.ini"))
-            configDir = str(settings['config_directory'])
-            
+            configDir = str(settings["config_directory"])
+
             if "fprime" in configDir.split("/"):
-                print(f"{FppmUtils.bcolors.FAIL}[ERR]: No output directory specified for config object [{configObject}], and F Prime config folder not configured in settings.ini.{FppmUtils.bcolors.ENDC}")
+                print(
+                    f"{FppmUtils.bcolors.FAIL}[ERR]: No output directory specified for config object [{configObject}], and F Prime config folder not configured in settings.ini.{FppmUtils.bcolors.ENDC}"
+                )
                 return 1
             else:
                 shutil.copy(
-                    f"_fprime_packages/{packageFolder}/{configObject}",
-                    f"{configDir}"
+                    f"_fprime_packages/{packageFolder}/{configObject}", f"{configDir}"
                 )
-                print(f"{FppmUtils.bcolors.OKGREEN}[DONE]: Moved config object [{configObject}] to [{configDir}].{FppmUtils.bcolors.ENDC}")
-            
+                print(
+                    f"{FppmUtils.bcolors.OKGREEN}[DONE]: Moved config object [{configObject}] to [{configDir}].{FppmUtils.bcolors.ENDC}"
+                )
+
                 if ".fpp" in configObject:
-                    print(f"{FppmUtils.bcolors.WARNING}[WARN]: Output file {configObject} is an FPP file; remember to add it as a source in CMakeLists.txt.{FppmUtils.bcolors.ENDC}")
-                    
+                    print(
+                        f"{FppmUtils.bcolors.WARNING}[WARN]: Output file {configObject} is an FPP file; remember to add it as a source in CMakeLists.txt.{FppmUtils.bcolors.ENDC}"
+                    )
+
                 continue
 
         create_fillable(
@@ -259,7 +268,9 @@ def generate_config_fillables(args, context):
             f"{packageFolder}.fillables",
         )
 
-    print(f"{FppmUtils.bcolors.OKGREEN}[DONE]: Generated all fillables at [{packageFolder}.fillables].{FppmUtils.bcolors.ENDC}")
+    print(
+        f"{FppmUtils.bcolors.OKGREEN}[DONE]: Generated all fillables at [{packageFolder}.fillables].{FppmUtils.bcolors.ENDC}"
+    )
     return 0
 
 
@@ -301,7 +312,9 @@ def apply_config_fillables(args, context):
             fillableContent = yaml.safe_load(fillableFile)
 
         if fillableContent == None:
-            print(f"{FppmUtils.bcolors.FAIL}[ERR]: Error parsing fillable [{fillable}].{FppmUtils.bcolors.ENDC}")
+            print(
+                f"{FppmUtils.bcolors.FAIL}[ERR]: Error parsing fillable [{fillable}].{FppmUtils.bcolors.ENDC}"
+            )
             return 1
 
         if fillableContent["__package_path"] != f"_fprime_packages/{packageFolder}":
@@ -332,7 +345,7 @@ def apply_config_fillables(args, context):
 
         if os.path.exists(tempName):
             shutil.rmtree(tempName, ignore_errors=True)
-            
+
         metaVarContent = {}
 
         for key in fillableContent.keys():
@@ -365,18 +378,25 @@ def apply_config_fillables(args, context):
                 FppmUtils.print_warning(f"[INFO]: Post-hook script [{metaVarContent['__post_hook']}] will be executed.")
                             
         if "__pre_hook" in metaVarContent.keys():
-            totalPath = str(Path(f"_fprime_packages/{packageFolder}/{metaVarContent['__pre_hook']}").absolute())
-            
+            totalPath = str(
+                Path(
+                    f"_fprime_packages/{packageFolder}/{metaVarContent['__pre_hook']}"
+                ).absolute()
+            )
+
             if os.path.exists(totalPath) == False:
-                FppmUtils.print_error(f"[ERR]: Pre-hook script [{metaVarContent['__pre_hook']}] not found.")
+                FppmUtils.print_error(
+                    f"[ERR]: Pre-hook script [{metaVarContent['__pre_hook']}] not found."
+                )
             else:
-                pre_hook_output = ConfigHooks.pre_hook(totalPath, str(Path(fillable).absolute()))
-                
+                pre_hook_output = ConfigHooks.pre_hook(
+                    totalPath, str(Path(fillable).absolute())
+                )
+
                 if pre_hook_output == 1:
                     return 1
-                
+
                 FppmUtils.print_warning(f"[INFO]: Pre-hook printed: {pre_hook_output}")
-                
 
         cookiecutter_name = "{{ cookiecutter.temporary___ }}"
 
@@ -445,7 +465,7 @@ def apply_config_fillables(args, context):
                 idxEnd = content.index("\n", idxStart)
 
                 content = content[:idxStart] + content[idxEnd:]
-                    
+
             if "@! post_hook = " in content:
                 # remove the post_hook metadata
                 idxStart = content.index("@! post_hook = ")
@@ -455,63 +475,80 @@ def apply_config_fillables(args, context):
 
             with open(f"{actual_cookiecutter}/{file}", "w") as fileContent:
                 fileContent.write(content)
-                
+
             if "__post_hook" in metaVarContent.keys():
-                totalPath = str(Path(f"_fprime_packages/{packageFolder}/{metaVarContent['__post_hook']}").absolute())
-                
+                totalPath = str(
+                    Path(
+                        f"_fprime_packages/{packageFolder}/{metaVarContent['__post_hook']}"
+                    ).absolute()
+                )
+
                 if os.path.exists(totalPath) == False:
-                    FppmUtils.print_error(f"[ERR]: Post-hook script [{metaVarContent['__post_hook']}] not found.")
+                    FppmUtils.print_error(
+                        f"[ERR]: Post-hook script [{metaVarContent['__post_hook']}] not found."
+                    )
                 else:
-                    post_hook_output = ConfigHooks.post_hook(totalPath, str(Path(f"{actual_cookiecutter}/{file}").absolute()))
-                    
+                    post_hook_output = ConfigHooks.post_hook(
+                        totalPath, str(Path(f"{actual_cookiecutter}/{file}").absolute())
+                    )
+
                     if post_hook_output == 1:
                         return 1
-                    
-                    FppmUtils.print_warning(f"[INFO]: Post-hook printed: {post_hook_output}")
-                            
+
+                    FppmUtils.print_warning(
+                        f"[INFO]: Post-hook printed: {post_hook_output}"
+                    )
+
             if "__output" in metaVarContent.keys():
                 if os.path.exists(f"{metaVarContent['__output']}/{file}"):
                     prompt = FppmUtils.prompt(
-                        f"[INFO]: File [{file}] already exists in the output directory. Overwrite? [y/n]: ", ["y", "n"]
+                        f"[INFO]: File [{file}] already exists in the output directory. Overwrite? [y/n]: ",
+                        ["y", "n"],
                     )
-                    
+
                     if prompt.lower() == "n":
                         shutil.move(
-                            f"{actual_cookiecutter}/{file}", f"{packageFolder}.fillables/out"
+                            f"{actual_cookiecutter}/{file}",
+                            f"{packageFolder}.fillables/out",
                         )
                         continue
                     elif prompt.lower() == "y":
                         os.remove(f"{fillableContent['__output']}/{file}")
                         shutil.move(
-                            f"{actual_cookiecutter}/{file}", metaVarContent['__output']
+                            f"{actual_cookiecutter}/{file}", metaVarContent["__output"]
                         )
                 else:
                     shutil.move(
-                        f"{actual_cookiecutter}/{file}", metaVarContent['__output']
+                        f"{actual_cookiecutter}/{file}", metaVarContent["__output"]
                     )
             else:
                 if os.path.exists(f"{packageFolder}.fillables/out/{file}"):
                     prompt = FppmUtils.prompt(
-                        f"[INFO]: File [{file}] already exists in the output directory. Overwrite? [y/n]: ", ["y", "n"]
+                        f"[INFO]: File [{file}] already exists in the output directory. Overwrite? [y/n]: ",
+                        ["y", "n"],
                     )
-                    
+
                     if prompt.lower() == "n":
                         os.remove(f"{actual_cookiecutter}/{file}")
                         continue
                     elif prompt.lower() == "y":
                         os.remove(f"{packageFolder}.fillables/out/{file}")
                         shutil.move(
-                            f"{actual_cookiecutter}/{file}", f"{packageFolder}.fillables/out"
+                            f"{actual_cookiecutter}/{file}",
+                            f"{packageFolder}.fillables/out",
                         )
                 else:
                     shutil.move(
-                        f"{actual_cookiecutter}/{file}", f"{packageFolder}.fillables/out"
+                        f"{actual_cookiecutter}/{file}",
+                        f"{packageFolder}.fillables/out",
                     )
 
         shutil.rmtree(actual_cookiecutter, ignore_errors=True)
         shutil.rmtree(f"__TMP__", ignore_errors=True)
 
-        print(f"{FppmUtils.bcolors.OKGREEN}[DONE]: Applied fillable [{fillable}].{FppmUtils.bcolors.ENDC}")
+        print(
+            f"{FppmUtils.bcolors.OKGREEN}[DONE]: Applied fillable [{fillable}].{FppmUtils.bcolors.ENDC}"
+        )
 
     print(
         f"{FppmUtils.bcolors.OKGREEN}[DONE]: Applied all fillables.{FppmUtils.bcolors.ENDC}"

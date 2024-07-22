@@ -17,14 +17,18 @@ def remove_package(args, context):
     try:
         existingPackage = glob.glob(f"_fprime_packages/{packageFolder}*")
     except Exception as e:
-        FppmUtils.print_error(f"[ERR]: Error checking for existing package [{args.package}]: {e}")
+        FppmUtils.print_error(
+            f"[ERR]: Error checking for existing package [{args.package}]: {e}"
+        )
         return 1
 
     for package in existingPackage:
         try:
             shutil.rmtree(package)
         except Exception as e:
-            FppmUtils.print_error(f"[ERR]: Error removing package [{args.package}]: {e}")
+            FppmUtils.print_error(
+                f"[ERR]: Error removing package [{args.package}]: {e}"
+            )
             return 1
 
     with open(f"_fprime_packages/CMakeLists.txt", "r") as f:
@@ -38,7 +42,10 @@ def remove_package(args, context):
     fillables = glob.glob(f"{packageFolder}.fillables")
 
     if len(fillables) > 0:
-        askRemoveFillables = FppmUtils.prompt("[???] Remove the fillables directory for package [{args.package}]? (y/n): ", ["y", "n"])
+        askRemoveFillables = FppmUtils.prompt(
+            "[???] Remove the fillables directory for package [{args.package}]? (y/n): ",
+            ["y", "n"],
+        )
         if askRemoveFillables == "y":
             try:
                 shutil.rmtree(fillables[0])

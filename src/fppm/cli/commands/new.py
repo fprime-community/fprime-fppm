@@ -18,7 +18,9 @@ def create_new_package_yml(args, context):
                 ["git", "ls-remote", args.git_url], capture_output=True, check=True
             )
         except subprocess.CalledProcessError as e:
-            FppmUtils.print_error(f"[ERR]: Invalid git URL provided. Please provide a valid git URL.")
+            FppmUtils.print_error(
+                f"[ERR]: Invalid git URL provided. Please provide a valid git URL."
+            )
             return 1
 
     print(f"[INFO]: Creating new package.yml file...")
@@ -61,7 +63,10 @@ def create_new_package_yml(args, context):
             skipGitSetup = True
     else:
         # for user input
-        askUserGit = FppmUtils.prompt("[???]: Would you like to initialize this package as a git repo? (y/n): ", ['y', 'n'])
+        askUserGit = FppmUtils.prompt(
+            "[???]: Would you like to initialize this package as a git repo? (y/n): ",
+            ["y", "n"],
+        )
         if userProvidedGitURL:
             print(
                 f"[INFO]: Git url was passed in. Initializing package as a git repo..."
