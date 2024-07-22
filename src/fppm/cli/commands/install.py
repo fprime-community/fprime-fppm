@@ -217,9 +217,7 @@ def install_package(args, context):
                         [
                             "git",
                             "checkout",
-                            f"tags/{packageVersion}",
-                            "--branch",
-                            package["info"]["branch"],
+                            f"tags/{packageVersion}"
                         ],
                         stderr=subprocess.PIPE,
                         stdout=subprocess.PIPE,
