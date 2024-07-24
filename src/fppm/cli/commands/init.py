@@ -75,7 +75,7 @@ def create_project_yaml_file(args, context) -> int:
                         "https://github.com/mosa11aei/fprime-subtopology-tool",
                     ]
                 )
-                
+
                 subprocess.check_call(
                     [
                         "git",
