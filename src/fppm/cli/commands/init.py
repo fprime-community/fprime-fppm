@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import subprocess
 import fppm.cli.utils as FppmUtils
+from fppm.USING import SUBTOPOLOGY_AC_TAG
 
 
 def create_project_yaml_file(args, context) -> int:
@@ -74,6 +75,15 @@ def create_project_yaml_file(args, context) -> int:
                         "https://github.com/mosa11aei/fprime-subtopology-tool",
                     ]
                 )
+                
+                subprocess.check_call(
+                    [
+                        "git",
+                        "checkout",
+                        f"tags/{SUBTOPOLOGY_AC_TAG}",
+                    ],
+                    cwd="fprime-subtopology-tool",
+                )
             except Exception as e:
                 FppmUtils.print_error(
                     f"[ERR]: Error installing subtopology autocoder: {e}"
@@ -81,7 +91,7 @@ def create_project_yaml_file(args, context) -> int:
                 return 1
 
             print(
-                f"[INFO]: Subtopology autocoder installed. Please follow the instructions in the tool's docs/README.md file to add the tool to your CMake process."
+                f"[INFO]: Subtopology autocoder installed at {SUBTOPOLOGY_AC_TAG}. Please follow the instructions in the tool's docs/README.md file to add the tool to your CMake process."
             )
 
     FppmUtils.print_success(
