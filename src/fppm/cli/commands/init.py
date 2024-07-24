@@ -76,13 +76,14 @@ def create_project_yaml_file(args, context) -> int:
                     ]
                 )
 
-                subprocess.check_call(
+                subprocess.call(
                     [
                         "git",
                         "checkout",
                         f"tags/{SUBTOPOLOGY_AC_TAG}",
                     ],
                     cwd="fprime-subtopology-tool",
+                    stdout=open(os.devnull, "wb"),
                 )
             except Exception as e:
                 FppmUtils.print_error(
@@ -90,7 +91,7 @@ def create_project_yaml_file(args, context) -> int:
                 )
                 return 1
 
-            print(
+            FppmUtils.print_warning(
                 f"[INFO]: Subtopology autocoder installed at {SUBTOPOLOGY_AC_TAG}. Please follow the instructions in the tool's docs/README.md file to add the tool to your CMake process."
             )
 
